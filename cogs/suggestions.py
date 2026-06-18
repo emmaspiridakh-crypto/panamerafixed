@@ -34,7 +34,7 @@ class Suggestions(commands.Cog):
             color=discord.Colour.gold(),
         )
         add_separator(container)
-        add_text(container, f"**{emoji('suggestions', 'upvote')} {upvotes}**   |   **{emoji('suggestions', 'downvote')} {downvotes}**")
+        add_text(container, f"**{emoji('suggestions', 'upvote')} {upvotes}**   ||   **{emoji('suggestions', 'downvote')} {downvotes}**")
         add_separator(container)
         up_btn = ui.Button(label="Upvote", style=discord.ButtonStyle.success,
                             emoji=emoji("suggestions", "upvote"), custom_id=f"suggestion_up:{msg_id}")
