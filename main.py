@@ -49,6 +49,19 @@ async def on_ready():
         log.error(f"Σφάλμα στο sync: {e}")
 
 
+@bot.tree.error
+async def on_app_command_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
+    log.error(f"Slash command error [{interaction.command and interaction.command.name}]: {error}", exc_info=error)
+    msg = f"❌ Σφάλμα: `{error}`"
+    try:
+        if interaction.response.is_done():
+            await interaction.followup.send(msg, ephemeral=True)
+        else:
+            await interaction.response.send_message(msg, ephemeral=True)
+    except Exception as e:
+        log.error(f"Αποτυχία αποστολής error message: {e}")
+
+
 async def main():
     keep_alive()  # ξεκινάει το fake Flask server για UptimeRobot
     async with bot:
