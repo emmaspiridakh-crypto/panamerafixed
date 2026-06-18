@@ -147,7 +147,7 @@ class Tickets(commands.Cog):
 
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        await new_channel.send(view=view, flags=discord.MessageFlags(is_components_v2=True))
+        await new_channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
 
         ping_channel = guild.get_channel(config.STAFF_PING_CHANNEL_ID)
         if ping_channel:
@@ -255,8 +255,8 @@ class Tickets(commands.Cog):
     async def panel_support(self, interaction: discord.Interaction):
         ttypes = _ticket_types()
         container = build_base_container(
-            title="Panamera Roleplay - Support Tickets",
-            description="Επίλεξε κατηγορία από το μενού παρακάτω για να ανοίξεις ticket και θα σε εξυπηρετίσουμε πολύ σύντομα.",
+            title="🎫 Support Tickets",
+            description="Επίλεξε κατηγορία από το μενού παρακάτω για να ανοίξεις ticket.",
             banner_url=config.TICKET_SUPPORT_BANNER_URL,
             thumbnail_url=config.TICKET_SUPPORT_THUMBNAIL_URL,
         )
@@ -271,30 +271,30 @@ class Tickets(commands.Cog):
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
         await interaction.response.defer(ephemeral=True)
-        await interaction.channel.send(view=view, flags=discord.MessageFlags(is_components_v2=True))
+        await interaction.channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
         await interaction.followup.send("✅ Στάλθηκε.", ephemeral=True)
 
     @app_commands.command(name="panel-civilian-job", description="Στέλνει το Civilian Job panel")
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_civilian_job(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="civilian_job", title="Panamera Roleplay - Civilian Job Ticket",
-            description="Πάτησε το κουμπί για να πάρεις το Civilian Job σου.",
+            interaction, key="civilian_job", title="👷 Civilian Job Ticket",
+            description="Πάτησε το κουμπί για να πάρεις Civilian Job.",
         )
 
     @app_commands.command(name="panel-criminal-job", description="Στέλνει το Criminal Job panel")
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_criminal_job(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="criminal_job", title="Panamera Roleplay - Criminal Job Ticket",
-            description="Πάτησε το κουμπί για να πάρεις το Criminal Job σου.",
+            interaction, key="criminal_job", title="🔫 Criminal Job Ticket",
+            description="Πάτησε το κουμπί για να πάρεις Criminal Job.",
         )
 
     @app_commands.command(name="panel-donate", description="Στέλνει το Donate panel")
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_donate(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="donate", title="Panamera Roleplay - Donate",
+            interaction, key="donate", title="💎 Donate",
             description="Πάτησε το κουμπί για να ανοίξεις donate ticket.",
         )
 
@@ -324,7 +324,7 @@ class Tickets(commands.Cog):
         view.add_item(container)
         # FIX: defer πρώτα, channel.send μετά, followup στο τέλος
         await interaction.response.defer(ephemeral=True)
-        await interaction.channel.send(view=view, flags=discord.MessageFlags(is_components_v2=True))
+        await interaction.channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
         await interaction.followup.send("✅ Στάλθηκε.", ephemeral=True)
 
 
