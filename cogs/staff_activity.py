@@ -98,7 +98,7 @@ class StaffActivity(commands.Cog):
             member = guild.get_member(uid)
             if member:
                 on_duty_lines.append(f"{emoji('staff_activity', 'on_duty')} {member.mention}")
-        on_duty_text = "\n".join(on_duty_lines) if on_duty_lines else "Κανείς δεν είναι on duty τώρα."
+        on_duty_text = "\n".join(on_duty_lines) if on_duty_lines else "Κανείς δεν είναι on duty αυτή τη στιγμή."
 
         container = build_base_container(
             title="📊 Staff Activity",
@@ -119,12 +119,12 @@ class StaffActivity(commands.Cog):
         return view
 
     # FIX: CRITICAL — σπαστεί indentation στο original (await ήταν εκτός μεθόδου → SyntaxError)
-    @app_commands.command(name="panel-staff-activity", description="Στέλνει το Staff Activity")
+    @app_commands.command(name="panel-staff-activity", description="Στέλνει το Staff Activity leaderboard panel")
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID)
     async def panel_staff_activity(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True)
         view = self._build_panel_view(interaction.guild)
-        await interaction.channel.send(view=view, flags=discord.MessageFlags(is_components_v2=True))
+        await interaction.channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
         await interaction.followup.send("✅ Στάλθηκε.", ephemeral=True)
 
     @commands.Cog.listener()
@@ -134,7 +134,7 @@ class StaffActivity(commands.Cog):
         if interaction.data.get("custom_id") == "staff_activity_refresh":
             view = self._build_panel_view(interaction.guild)
             # FIX: flags απαραίτητα για Components V2 στο edit_message
-            await interaction.response.edit_message(view=view, flags=discord.MessageFlags(is_components_v2=True))
+            await interaction.response.edit_message(view=view, flags=discord.MessageFlags._from_value(1 << 15))
 
 
 async def setup(bot: commands.Bot):
