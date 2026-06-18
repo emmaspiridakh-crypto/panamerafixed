@@ -64,7 +64,7 @@ class Moderation(commands.Cog):
     @is_staff_team()
     async def ban_cmd(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         await member.ban(reason=reason)
-        await ctx.send(f"🔨 Ο/Η {member.mention} έκανε ban.")
+        await ctx.send(f"🔨 Ο {member.mention} έκανε ban.")
         await _send_log(ctx.guild, config.LOG_BAN_CHANNEL_ID,
                          _log_embed(ctx.guild, title="🔨 Ban", moderator=ctx.author,
                                     target=f"{member.mention} (`{member.id}`)", reason=reason))
@@ -75,7 +75,7 @@ class Moderation(commands.Cog):
     async def unban_cmd(self, ctx: commands.Context, user_id: int, *, reason: str = None):
         user = await self.bot.fetch_user(user_id)
         await ctx.guild.unban(user, reason=reason)
-        await ctx.send(f"✅ Ο/Η {user.mention} έκανε unban.")
+        await ctx.send(f"✅ Ο {user.mention} έκανε unban.")
         await _send_log(ctx.guild, config.LOG_UNBAN_CHANNEL_ID,
                          _log_embed(ctx.guild, title="✅ Unban", moderator=ctx.author,
                                     target=f"{user.mention} (`{user.id}`)", reason=reason))
@@ -85,7 +85,7 @@ class Moderation(commands.Cog):
     @is_staff_team()
     async def kick_cmd(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         await member.kick(reason=reason)
-        await ctx.send(f"👋 Ο/Η {member.mention} έκανε kick.")
+        await ctx.send(f"👋 Ο {member.mention} έκανε kick.")
         await _send_log(ctx.guild, config.LOG_KICK_CHANNEL_ID,
                          _log_embed(ctx.guild, title="👋 Kick", moderator=ctx.author,
                                     target=f"{member.mention} (`{member.id}`)", reason=reason))
@@ -99,7 +99,7 @@ class Moderation(commands.Cog):
             await ctx.send("⚠️ Λάθος format διάρκειας. Χρήση: 10s / 10m / 1h / 1d")
             return
         await member.timeout(delta, reason=reason)
-        await ctx.send(f"⏱️ Ο/Η {member.mention} πήρε timeout για {duration}.")
+        await ctx.send(f"⏱️ Ο {member.mention} πήρε timeout για {duration}.")
         await _send_log(ctx.guild, config.LOG_TIMEOUT_CHANNEL_ID,
                          _log_embed(ctx.guild, title="⏱️ Timeout", moderator=ctx.author,
                                     target=f"{member.mention} (`{member.id}`) — {duration}", reason=reason))
