@@ -22,7 +22,7 @@ def _safe_name(text: str) -> str:
     return "".join(c for c in text if c.isalnum() or c == "-")[:90]
 
 
-class DenyReasonModal(ui.Modal, title="Αιτιολογία Απόρριψης"):
+class DenyReasonModal(ui.Modal, title="Αιτία Απόρριψης"):
     reason = ui.TextInput(label="Λόγος απόρριψης", style=discord.TextStyle.paragraph, required=True, max_length=500)
 
     def __init__(self, channel_id: int, cog: "Applications"):
@@ -44,7 +44,7 @@ class Applications(commands.Cog):
     async def panel_applications(self, interaction: discord.Interaction):
         container = build_base_container(
             title="📋 Applications",
-            description="Επίλεξε σε τι θες να κάνεις αίτηση και πάτησε **Apply**.",
+            description="Επίλεξε σε τι θες να κάνεις αίτηση και πάτησε **Apply**. Έχεις 30 λεπτά αλλιώς θα ακυρωθεί.",
             banner_url=config.APPLICATIONS_BANNER_URL,
         )
         add_separator(container)
@@ -105,7 +105,7 @@ class Applications(commands.Cog):
 
         container = build_base_container(
             title=f"{data['label']} Application",
-            description=f"{user.mention}\nΠάτησε **Start Your Application** όταν είσαι έτοιμος/η.",
+            description=f"{user.mention}\nΠάτησε **Start Your Application** όταν είσαι έτοιμος/η. (Χρόνος ολοκλήρωσης: 30 λεπτά).",
         )
         add_separator(container)
         start_btn = ui.Button(label="Start Your Application", style=discord.ButtonStyle.success, custom_id=f"app_start:{channel.id}")
@@ -167,7 +167,7 @@ class Applications(commands.Cog):
             store[str(message.channel.id)] = info
             storage.save(STORE_NAME, store)
 
-            container = build_base_container(title="✅ Ολοκλήρωσες τις ερωτήσεις!", description="Πάτησε **Send** για να στείλεις την αίτηση.")
+            container = build_base_container(title="✅ Ολοκλήρωσες τις ερωτήσεις", description="Πάτησε **Send** για να στείλεις την αίτηση σου.")
             send_btn = ui.Button(label="Send", style=discord.ButtonStyle.success,
                                   emoji=emoji("applications", "send"), custom_id=f"app_send:{message.channel.id}")
             add_action_row(container, send_btn)
@@ -180,7 +180,7 @@ class Applications(commands.Cog):
         store = storage.get_store(STORE_NAME)
         info = store.get(str(channel_id))
         if not info or interaction.user.id != info["user_id"]:
-            await interaction.response.send_message("Μόνο αυτός που έκανε την αίτηση μπορεί να τη στείλει.", ephemeral=True)
+            await interaction.response.send_message("Μόνο αυτός που έκανε την αίτηση μπορεί να την στείλει.", ephemeral=True)
             return
 
         # FIX: defer πριν στείλουμε στο log channel
