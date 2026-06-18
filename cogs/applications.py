@@ -22,7 +22,7 @@ def _safe_name(text: str) -> str:
     return "".join(c for c in text if c.isalnum() or c == "-")[:90]
 
 
-class DenyReasonModal(ui.Modal, title="Αιτία Απόρριψης"):
+class DenyReasonModal(ui.Modal, title="Αιτιολογία Απόρριψης"):
     reason = ui.TextInput(label="Λόγος απόρριψης", style=discord.TextStyle.paragraph, required=True, max_length=500)
 
     def __init__(self, channel_id: int, cog: "Applications"):
@@ -44,7 +44,7 @@ class Applications(commands.Cog):
     async def panel_applications(self, interaction: discord.Interaction):
         container = build_base_container(
             title="📋 Applications",
-            description="Επίλεξε σε τι θες να κάνεις αίτηση και πάτησε **Apply**. Έχεις 30 λεπτά αλλιώς θα ακυρωθεί.",
+            description="Επίλεξε σε τι θες να κάνεις αίτηση και πάτησε **Apply**.",
             banner_url=config.APPLICATIONS_BANNER_URL,
         )
         add_separator(container)
@@ -57,7 +57,7 @@ class Applications(commands.Cog):
         view.add_item(container)
         # FIX: defer πρώτα
         await interaction.response.defer(ephemeral=True)
-        await interaction.channel.send(view=view, flags=discord.MessageFlags(is_components_v2=True))
+        await interaction.channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
         await interaction.followup.send("✅ Στάλθηκε.", ephemeral=True)
 
     # ---------------- APPLY -> δημιουργία channel ----------------
@@ -105,7 +105,7 @@ class Applications(commands.Cog):
 
         container = build_base_container(
             title=f"{data['label']} Application",
-            description=f"{user.mention}\nΠάτησε **Start Your Application** όταν είσαι έτοιμος/η. (Χρόνος ολοκλήρωσης: 30 λεπτά).",
+            description=f"{user.mention}\nΠάτησε **Start Your Application** όταν είσαι έτοιμος/η.",
         )
         add_separator(container)
         start_btn = ui.Button(label="Start Your Application", style=discord.ButtonStyle.success, custom_id=f"app_start:{channel.id}")
@@ -116,7 +116,7 @@ class Applications(commands.Cog):
 
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        await channel.send(view=view, flags=discord.MessageFlags(is_components_v2=True))
+        await channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
         # FIX: followup αντί για response
         await interaction.followup.send(f"✅ Η αίτηση σου: {channel.mention}", ephemeral=True)
 
@@ -129,7 +129,7 @@ class Applications(commands.Cog):
         )
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        await channel.send(view=view, flags=discord.MessageFlags(is_components_v2=True))
+        await channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
 
     async def handle_start(self, interaction: discord.Interaction, channel_id: int):
         store = storage.get_store(STORE_NAME)
@@ -167,20 +167,20 @@ class Applications(commands.Cog):
             store[str(message.channel.id)] = info
             storage.save(STORE_NAME, store)
 
-            container = build_base_container(title="✅ Ολοκλήρωσες τις ερωτήσεις", description="Πάτησε **Send** για να στείλεις την αίτηση σου.")
+            container = build_base_container(title="✅ Ολοκλήρωσες τις ερωτήσεις!", description="Πάτησε **Send** για να στείλεις την αίτηση.")
             send_btn = ui.Button(label="Send", style=discord.ButtonStyle.success,
                                   emoji=emoji("applications", "send"), custom_id=f"app_send:{message.channel.id}")
             add_action_row(container, send_btn)
             view = ui.LayoutView(timeout=None)
             view.add_item(container)
-            await message.channel.send(view=view, flags=discord.MessageFlags(is_components_v2=True))
+            await message.channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
 
     # ---------------- SEND -> log channel με Accept/Deny ----------------
     async def handle_send(self, interaction: discord.Interaction, channel_id: int):
         store = storage.get_store(STORE_NAME)
         info = store.get(str(channel_id))
         if not info or interaction.user.id != info["user_id"]:
-            await interaction.response.send_message("Μόνο αυτός που έκανε την αίτηση μπορεί να την στείλει.", ephemeral=True)
+            await interaction.response.send_message("Μόνο αυτός που έκανε την αίτηση μπορεί να τη στείλει.", ephemeral=True)
             return
 
         # FIX: defer πριν στείλουμε στο log channel
@@ -209,7 +209,7 @@ class Applications(commands.Cog):
 
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        log_message = await log_channel.send(view=view, flags=discord.MessageFlags(is_components_v2=True))
+        log_message = await log_channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
 
         info["status"] = "submitted"
         info["log_message_id"] = log_message.id
@@ -259,9 +259,9 @@ class Applications(commands.Cog):
 
         # FIX: flags απαραίτητα και στο edit για Components V2
         if interaction.response.is_done():
-            await interaction.message.edit(view=view, flags=discord.MessageFlags(is_components_v2=True))
+            await interaction.message.edit(view=view, flags=discord.MessageFlags._from_value(1 << 15))
         else:
-            await interaction.response.edit_message(view=view, flags=discord.MessageFlags(is_components_v2=True))
+            await interaction.response.edit_message(view=view, flags=discord.MessageFlags._from_value(1 << 15))
 
     # ---------------- CLOSE / PING ----------------
     async def handle_close(self, interaction: discord.Interaction, channel_id: int):
