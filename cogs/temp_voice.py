@@ -41,7 +41,7 @@ class TempVoice(commands.Cog):
             ping_channel = guild.get_channel(config.STAFF_PING_CHANNEL_ID)
             if ping_channel:
                 await ping_channel.send(
-                    f"{emoji('voice', 'temp')} Νέο temp voice channel: **{new_channel.name}** από {member.mention}"
+                    f"{emoji('voice', 'temp')} Νέο temp voice channel από {member.mention}"
                 )
 
         # --- Διαγραφή temp channel όταν αδειάσει ---
