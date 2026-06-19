@@ -147,7 +147,7 @@ class Tickets(commands.Cog):
 
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        await new_channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
+        await interaction.channel.send(view=view)
 
         ping_channel = guild.get_channel(config.STAFF_PING_CHANNEL_ID)
         if ping_channel:
@@ -271,7 +271,7 @@ class Tickets(commands.Cog):
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
         await interaction.response.defer(ephemeral=True)
-        await interaction.channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
+        await interaction.channel.send(view=view)
         await interaction.followup.send("✅ Στάλθηκε.", ephemeral=True)
 
     @app_commands.command(name="panel-civilian-job", description="Στέλνει το Civilian Job panel")
@@ -324,7 +324,7 @@ class Tickets(commands.Cog):
         view.add_item(container)
         # FIX: defer πρώτα, channel.send μετά, followup στο τέλος
         await interaction.response.defer(ephemeral=True)
-        await interaction.channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
+        await interaction.channel.send(view=view)
         await interaction.followup.send("✅ Στάλθηκε.", ephemeral=True)
 
 
