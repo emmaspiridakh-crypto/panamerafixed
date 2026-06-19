@@ -57,7 +57,7 @@ class Applications(commands.Cog):
         view.add_item(container)
         # FIX: defer πρώτα
         await interaction.response.defer(ephemeral=True)
-        await interaction.channel.send(view=view)
+        await new_channel.send(view=view)
         await interaction.followup.send("✅ Στάλθηκε.", ephemeral=True)
 
     # ---------------- APPLY -> δημιουργία channel ----------------
