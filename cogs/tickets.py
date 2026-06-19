@@ -1,5 +1,17 @@
 """
 cogs/tickets.py
+-----------------
+Καλύπτει τις απαιτήσεις #1, #2, #3 (όλα είναι το ίδιο "ticket system" κάτω
+από το καπό, απλά διαφέρει το panel/visibility/category).
+
+Persistence pattern για τα buttons/select:
+    Δεν χρησιμοποιούμε discord.py callbacks πάνω στα ίδια τα Button/Select
+    αντικείμενα (γιατί αυτά "χάνονται" μετά από restart του bot, εκτός αν
+    κάνεις πολύπλοκο dynamic-items setup). Αντί αυτού:
+      1. Στέλνουμε τα components με ΣΤΑΘΕΡΑ custom_id (π.χ. "ticket_close:<channel_id>")
+      2. Ένας ΚΕΝΤΡΙΚΟΣ on_interaction listener (παρακάτω) πιάνει ΚΑΘΕ
+         interaction και βάσει του custom_id αποφασίζει τι να κάνει.
+    Έτσι όλα δουλεύουν persistent ακόμα και μετά από redeploy/restart.
 """
 
 from __future__ import annotations
@@ -14,9 +26,12 @@ from utils import storage
 from utils.permissions import has_roles
 from utils.components import build_base_container, add_action_row, add_separator, add_text
 
-STORE_NAME = "tickets"
+STORE_NAME = "tickets"  # data/tickets.json
 
 
+# =========================================================
+# Ορισμός όλων των τύπων ticket (ανεξάρτητα από ποιο panel τα δείχνει)
+# =========================================================
 def _ticket_types() -> dict:
     return {
         "ownership": {
@@ -74,7 +89,7 @@ class Tickets(commands.Cog):
         self.bot = bot
 
     # ---------------------------------------------------
-    # Δημιουργία ticket channel
+    # Δημιουργία ticket channel (κοινή λογική για ΟΛΑ τα είδη)
     # ---------------------------------------------------
     async def create_ticket(self, interaction: discord.Interaction, ticket_key: str):
         ttypes = _ticket_types()
@@ -86,7 +101,7 @@ class Tickets(commands.Cog):
         guild = interaction.guild
         opener = interaction.user
 
-        # Sync έλεγχοι πριν το defer
+        # Έλεγχος αν έχει ήδη ανοιχτό ticket αυτού του τύπου
         store = storage.get_store(STORE_NAME)
         for ch_id, info in store.items():
             if info.get("opener_id") == opener.id and info.get("type") == ticket_key:
@@ -104,9 +119,6 @@ class Tickets(commands.Cog):
             )
             return
 
-        # FIX: defer πριν τις async λειτουργίες (channel creation παίρνει > 3 δευτ.)
-        await interaction.response.defer(ephemeral=True)
-
         overwrites = {
             guild.default_role: discord.PermissionOverwrite(view_channel=False),
             opener: discord.PermissionOverwrite(view_channel=True, send_messages=True, attach_files=True),
@@ -122,6 +134,7 @@ class Tickets(commands.Cog):
             name=channel_name, category=category, overwrites=overwrites
         )
 
+        # Αποθήκευση
         store[str(new_channel.id)] = {
             "type": ticket_key,
             "opener_id": opener.id,
@@ -129,6 +142,7 @@ class Tickets(commands.Cog):
         }
         storage.save(STORE_NAME, store)
 
+        # Μήνυμα μέσα στο ticket
         container = build_base_container(
             title=f"{data['emoji']} {data['label']} Ticket",
             description=f"Άνοιξε από: {opener.mention}\nΠερίγραψε το θέμα σου, η ομάδα θα απαντήσει σύντομα.",
@@ -148,15 +162,15 @@ class Tickets(commands.Cog):
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
         await new_channel.send(view=view)
-        
+
+        # Ping staff team
         ping_channel = guild.get_channel(config.STAFF_PING_CHANNEL_ID)
         if ping_channel:
             await ping_channel.send(
                 f"{emoji('tickets', 'ticket')} Νέο ticket: {new_channel.mention} από {opener.mention} ({data['label']})"
             )
 
-        # FIX: followup αντί για response (έχουμε ήδη κάνει defer)
-        await interaction.followup.send(f"✅ Το ticket σου: {new_channel.mention}", ephemeral=True)
+        await interaction.response.send_message(f"✅ Το ticket σου: {new_channel.mention}", ephemeral=True)
 
     # ---------------------------------------------------
     # Κλείσιμο ticket
@@ -183,7 +197,7 @@ class Tickets(commands.Cog):
             await channel.delete(reason=f"Ticket closed by {interaction.user}")
 
     # ---------------------------------------------------
-    # Ping User — FIX: role check + None check + DM πριν response
+    # Ping User
     # ---------------------------------------------------
     async def handle_ping_user(self, interaction: discord.Interaction, channel_id: int):
         store = storage.get_store(STORE_NAME)
@@ -192,40 +206,24 @@ class Tickets(commands.Cog):
             await interaction.response.send_message("Αυτό το ticket δεν υπάρχει πια στο σύστημα.", ephemeral=True)
             return
 
-        # FIX: μόνο staff/managers/ownership/developers μπορούν
-        allowed_roles = [
-            *config.STAFF_TEAM_ROLE_IDS,
-            config.CIVILIAN_MANAGER_ROLE_ID,
-            config.CRIMINAL_MANAGER_ROLE_ID,
-            config.DONATE_MANAGER_ROLE_ID,
-            config.DEVELOPER_ROLE_ID,
-        ]
-        if not has_roles(interaction.user, allowed_roles):
-            await interaction.response.send_message(
-                "⛔ Δεν έχεις δικαίωμα να χρησιμοποιήσεις αυτό το κουμπί.", ephemeral=True
-            )
+        if not has_roles(interaction.user, config.STAFF_TEAM_ROLE_IDS):
+            await interaction.response.send_message("⛔ Μόνο το staff team μπορεί να κάνει ping τον χρήστη.", ephemeral=True)
+            return
+
+        if interaction.user.id == info["opener_id"]:
+            await interaction.response.send_message("Δεν μπορείς να κάνεις ping τον εαυτό σου.", ephemeral=True)
             return
 
         opener = interaction.guild.get_member(info["opener_id"])
-        # FIX: έλεγχος αν ο opener έχει φύγει από τον server
-        if opener is None:
-            await interaction.response.send_message(
-                "⚠️ Ο χρήστης δεν βρίσκεται πια στον server.", ephemeral=True
-            )
-            return
-
-        # FIX: DM πρώτα, μετά respond (αν το DM κάνει crash δεν έχουμε ήδη απαντήσει)
-        dm_sent = True
-        try:
-            await opener.send(f"🔔 Έχεις ειδοποίηση στο ticket σου: {interaction.channel.mention}")
-        except discord.Forbidden:
-            dm_sent = False
-
-        note = "" if dm_sent else " _(τα DMs του είναι κλειστά)_"
-        await interaction.response.send_message(f"🔔 {opener.mention}{note}", ephemeral=False)
+        await interaction.response.send_message(f"🔔 {opener.mention if opener else ''}", ephemeral=False)
+        if opener:
+            try:
+                await opener.send(f"🔔 Έχεις ειδοποίηση στο ticket σου: {interaction.channel.mention}")
+            except discord.Forbidden:
+                pass
 
     # ---------------------------------------------------
-    # Κεντρικός interaction listener
+    # Κεντρικός interaction listener (persistent components)
     # ---------------------------------------------------
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction):
@@ -243,12 +241,14 @@ class Tickets(commands.Cog):
         elif custom_id == "ticket_open_donate":
             await self.create_ticket(interaction, "donate")
         elif custom_id.startswith("ticket_close:"):
-            await self.handle_close(interaction, int(custom_id.split(":")[1]))
+            channel_id = int(custom_id.split(":")[1])
+            await self.handle_close(interaction, channel_id)
         elif custom_id.startswith("ticket_ping:"):
-            await self.handle_ping_user(interaction, int(custom_id.split(":")[1]))
+            channel_id = int(custom_id.split(":")[1])
+            await self.handle_ping_user(interaction, channel_id)
 
     # ---------------------------------------------------
-    # Slash commands — FIX: defer πρώτα, followup μετά
+    # Slash commands - στέλνουν τα panels
     # ---------------------------------------------------
     @app_commands.command(name="panel-support", description="Στέλνει το Support ticket panel (dropdown)")
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
@@ -270,24 +270,23 @@ class Tickets(commands.Cog):
 
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        await interaction.response.defer(ephemeral=True)
-        await new_channel.send(view=view)
-        await interaction.followup.send("✅ Στάλθηκε.", ephemeral=True)
+        await interaction.channel.send(view=view)
+        await interaction.response.send_message("✅ Στάλθηκε.", ephemeral=True)
 
     @app_commands.command(name="panel-civilian-job", description="Στέλνει το Civilian Job panel")
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_civilian_job(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="civilian_job", title="👷 Civilian Job Ticket",
-            description="Πάτησε το κουμπί για να πάρεις Civilian Job.",
+            interaction, key="civilian_job", title="👷 Civilian Job Application",
+            description="Πάτησε το κουμπί για να κάνεις αίτηση για Civilian Job.",
         )
 
     @app_commands.command(name="panel-criminal-job", description="Στέλνει το Criminal Job panel")
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_criminal_job(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="criminal_job", title="🔫 Criminal Job Ticket",
-            description="Πάτησε το κουμπί για να πάρεις Criminal Job.",
+            interaction, key="criminal_job", title="🔫 Criminal Job Application",
+            description="Πάτησε το κουμπί για να κάνεις αίτηση για Criminal Job.",
         )
 
     @app_commands.command(name="panel-donate", description="Στέλνει το Donate panel")
@@ -322,10 +321,8 @@ class Tickets(commands.Cog):
 
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        # FIX: defer πρώτα, channel.send μετά, followup στο τέλος
-        await interaction.response.defer(ephemeral=True)
-        await new_channel.send(view=view)
-        await interaction.followup.send("✅ Στάλθηκε.", ephemeral=True)
+        await interaction.channel.send(view=view)
+        await interaction.response.send_message("✅ Στάλθηκε.", ephemeral=True)
 
 
 async def setup(bot: commands.Bot):
