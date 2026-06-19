@@ -124,7 +124,7 @@ class StaffActivity(commands.Cog):
     async def panel_staff_activity(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True)
         view = self._build_panel_view(interaction.guild)
-        await interaction.channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
+        await interaction.channel.send(view=view))
         await interaction.followup.send("✅ Στάλθηκε.", ephemeral=True)
 
     @commands.Cog.listener()
@@ -134,7 +134,7 @@ class StaffActivity(commands.Cog):
         if interaction.data.get("custom_id") == "staff_activity_refresh":
             view = self._build_panel_view(interaction.guild)
             # FIX: flags απαραίτητα για Components V2 στο edit_message
-            await interaction.response.edit_message(view=view, flags=discord.MessageFlags._from_value(1 << 15))
+            await interaction.channel.send(view=view)
 
 
 async def setup(bot: commands.Bot):
