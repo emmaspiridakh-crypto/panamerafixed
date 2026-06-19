@@ -57,7 +57,7 @@ class Applications(commands.Cog):
         view.add_item(container)
         # FIX: defer πρώτα
         await interaction.response.defer(ephemeral=True)
-        await interaction.channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
+        await interaction.channel.send(view=view)
         await interaction.followup.send("✅ Στάλθηκε.", ephemeral=True)
 
     # ---------------- APPLY -> δημιουργία channel ----------------
@@ -116,7 +116,7 @@ class Applications(commands.Cog):
 
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        await channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
+        await interaction.channel.send(view=view)
         # FIX: followup αντί για response
         await interaction.followup.send(f"✅ Η αίτηση σου: {channel.mention}", ephemeral=True)
 
@@ -129,7 +129,7 @@ class Applications(commands.Cog):
         )
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        await channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
+        await interaction.channel.send(view=view)
 
     async def handle_start(self, interaction: discord.Interaction, channel_id: int):
         store = storage.get_store(STORE_NAME)
@@ -173,7 +173,7 @@ class Applications(commands.Cog):
             add_action_row(container, send_btn)
             view = ui.LayoutView(timeout=None)
             view.add_item(container)
-            await message.channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
+            await interaction.channel.send(view=view)
 
     # ---------------- SEND -> log channel με Accept/Deny ----------------
     async def handle_send(self, interaction: discord.Interaction, channel_id: int):
@@ -209,7 +209,7 @@ class Applications(commands.Cog):
 
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        log_message = await log_channel.send(view=view, flags=discord.MessageFlags._from_value(1 << 15))
+        await interaction.channel.send(view=view)
 
         info["status"] = "submitted"
         info["log_message_id"] = log_message.id
@@ -259,10 +259,9 @@ class Applications(commands.Cog):
 
         # FIX: flags απαραίτητα και στο edit για Components V2
         if interaction.response.is_done():
-            await interaction.message.edit(view=view, flags=discord.MessageFlags._from_value(1 << 15))
+            await interaction.channel.send(view=view)
         else:
-            await interaction.response.edit_message(view=view, flags=discord.MessageFlags._from_value(1 << 15))
-
+            await interaction.channel.send(view=view)
     # ---------------- CLOSE / PING ----------------
     async def handle_close(self, interaction: discord.Interaction, channel_id: int):
         store = storage.get_store(STORE_NAME)
