@@ -1,5 +1,14 @@
 """
 cogs/applications.py
+-----------------------
+Requirement #9. Ροή:
+    1. Panel με λίστα τύπων αίτησης (banner πάνω, από κάτω TextDisplay + Apply button ανά τύπο)
+    2. Apply -> ανοίγει private channel με 3 κουμπιά: Start Your Application / Close / Ping Staff
+    3. Start -> bot στέλνει ερωτήσεις ΜΙΑ-ΜΙΑ, ο χρήστης απαντάει γράφοντας στο channel
+    4. Μετά την τελευταία ερώτηση -> κουμπί "Send"
+    5. Send -> στέλνει την αίτηση (Components V2) στο log channel: mention + Q&A + Accept/Deny
+    6. Deny απαιτεί reason (Modal). Σε Accept -> ρόλος "Waiting for Interview" + DM.
+       Σε Deny -> DM με την αιτιολογία. Και στις δύο περιπτώσεις τα κουμπιά εξαφανίζονται.
 """
 
 from __future__ import annotations
@@ -14,7 +23,7 @@ from utils import storage
 from utils.permissions import has_roles
 from utils.components import build_base_container, add_separator, add_text, add_action_row, add_section_with_button
 
-STORE_NAME = "applications"
+STORE_NAME = "applications"  # data/applications.json -> {channel_id: {...}}
 
 
 def _safe_name(text: str) -> str:
@@ -55,10 +64,8 @@ class Applications(commands.Cog):
 
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        # FIX: defer πρώτα
-        await interaction.response.defer(ephemeral=True)
-        await new_channel.send(view=view)
-        await interaction.followup.send("✅ Στάλθηκε.", ephemeral=True)
+        await interaction.channel.send(view=view)
+        await interaction.response.send_message("✅ Στάλθηκε.", ephemeral=True)
 
     # ---------------- APPLY -> δημιουργία channel ----------------
     async def start_apply(self, interaction: discord.Interaction, type_key: str):
@@ -70,7 +77,6 @@ class Applications(commands.Cog):
         guild = interaction.guild
         user = interaction.user
 
-        # Sync έλεγχοι πριν το defer
         store = storage.get_store(STORE_NAME)
         for ch_id, info in store.items():
             if info.get("user_id") == user.id and info.get("status") not in ("closed", "denied", "accepted"):
@@ -78,9 +84,6 @@ class Applications(commands.Cog):
                 if channel:
                     await interaction.response.send_message(f"Έχεις ήδη ανοιχτή αίτηση: {channel.mention}", ephemeral=True)
                     return
-
-        # FIX: defer πριν τη δημιουργία channel
-        await interaction.response.defer(ephemeral=True)
 
         category = guild.get_channel(config.APPLICATIONS_CATEGORY_ID)
         overwrites = {
@@ -116,9 +119,8 @@ class Applications(commands.Cog):
 
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        await interaction.channel.send(view=view)
-        # FIX: followup αντί για response
-        await interaction.followup.send(f"✅ Η αίτηση σου: {channel.mention}", ephemeral=True)
+        await channel.send(view=view)
+        await interaction.response.send_message(f"✅ Η αίτηση σου: {channel.mention}", ephemeral=True)
 
     # ---------------- START -> πρώτη ερώτηση ----------------
     async def send_question(self, channel: discord.TextChannel, type_key: str, step: int):
@@ -129,7 +131,7 @@ class Applications(commands.Cog):
         )
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        await interaction.channel.send(view=view)
+        await channel.send(view=view)
 
     async def handle_start(self, interaction: discord.Interaction, channel_id: int):
         store = storage.get_store(STORE_NAME)
@@ -173,7 +175,7 @@ class Applications(commands.Cog):
             add_action_row(container, send_btn)
             view = ui.LayoutView(timeout=None)
             view.add_item(container)
-            await interaction.channel.send(view=view)
+            await message.channel.send(view=view)
 
     # ---------------- SEND -> log channel με Accept/Deny ----------------
     async def handle_send(self, interaction: discord.Interaction, channel_id: int):
@@ -182,9 +184,6 @@ class Applications(commands.Cog):
         if not info or interaction.user.id != info["user_id"]:
             await interaction.response.send_message("Μόνο αυτός που έκανε την αίτηση μπορεί να τη στείλει.", ephemeral=True)
             return
-
-        # FIX: defer πριν στείλουμε στο log channel
-        await interaction.response.defer(ephemeral=True)
 
         guild = interaction.guild
         applicant = guild.get_member(info["user_id"])
@@ -209,15 +208,14 @@ class Applications(commands.Cog):
 
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
-        await interaction.channel.send(view=view)
+        log_message = await log_channel.send(view=view)
 
         info["status"] = "submitted"
         info["log_message_id"] = log_message.id
         store[str(channel_id)] = info
         storage.save(STORE_NAME, store)
 
-        # FIX: followup αντί για response
-        await interaction.followup.send("✅ Η αίτηση στάλθηκε! Θα ενημερωθείς με DM.", ephemeral=True)
+        await interaction.response.send_message("✅ Η αίτηση στάλθηκε! Θα ενημερωθείς με DM.", ephemeral=True)
 
     # ---------------- ACCEPT / DENY ----------------
     async def finalize_application(self, interaction: discord.Interaction, channel_id: int, *, accepted: bool, reason: str | None = None):
@@ -249,6 +247,7 @@ class Applications(commands.Cog):
             except discord.Forbidden:
                 pass
 
+        # Αφαίρεση κουμπιών από το log message
         status_text = "✅ **Accepted**" if accepted else f"❌ **Denied** — {reason}"
         container = build_base_container(
             title=f"📋 Αίτηση — {config.APPLICATION_TYPES[info['type']]['label']}",
@@ -257,11 +256,11 @@ class Applications(commands.Cog):
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
 
-        # FIX: flags απαραίτητα και στο edit για Components V2
         if interaction.response.is_done():
-            await interaction.channel.send(view=view)
+            await interaction.message.edit(view=view)
         else:
-            await interaction.channel.send(view=view)
+            await interaction.response.edit_message(view=view)
+
     # ---------------- CLOSE / PING ----------------
     async def handle_close(self, interaction: discord.Interaction, channel_id: int):
         store = storage.get_store(STORE_NAME)
@@ -288,20 +287,12 @@ class Applications(commands.Cog):
 
         guild = interaction.guild
         applicant = guild.get_member(info["user_id"])
-        # FIX: έλεγχος None πριν το mention
-        if applicant is None:
-            await interaction.response.send_message("⚠️ Ο χρήστης δεν βρίσκεται πια στον server.", ephemeral=True)
-            return
-
-        # FIX: DM πρώτα, μετά respond
-        dm_sent = True
-        try:
-            await applicant.send(f"🔔 Έχεις ειδοποίηση στην αίτηση σου: {interaction.channel.mention}")
-        except discord.Forbidden:
-            dm_sent = False
-
-        note = "" if dm_sent else " _(τα DMs του είναι κλειστά)_"
-        await interaction.response.send_message(f"🔔 {applicant.mention}{note}", ephemeral=False)
+        await interaction.response.send_message(f"🔔 {applicant.mention if applicant else ''}", ephemeral=False)
+        if applicant:
+            try:
+                await applicant.send(f"🔔 Έχεις ειδοποίηση στην αίτηση σου: {interaction.channel.mention}")
+            except discord.Forbidden:
+                pass
 
     # ---------------- Κεντρικός listener ----------------
     @commands.Cog.listener()
