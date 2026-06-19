@@ -124,7 +124,7 @@ class StaffActivity(commands.Cog):
     async def panel_staff_activity(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True)
         view = self._build_panel_view(interaction.guild)
-        await interaction.channel.send(view=view))
+        await interaction.channel.send(view=view)
         await interaction.followup.send("✅ Στάλθηκε.", ephemeral=True)
 
     @commands.Cog.listener()
