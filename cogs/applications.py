@@ -53,7 +53,7 @@ class Applications(commands.Cog):
     async def panel_applications(self, interaction: discord.Interaction):
         container = build_base_container(
             title="📋 Applications",
-            description="Επίλεξε σε τι θες να κάνεις αίτηση και πάτησε **Apply**.",
+            description="Επίλεξε σε τι θες να κάνεις αίτηση και πάτησε **Apply.****Απαγορεύτε η χρήση του ΑΙ**. Έχεις 30 λεπτά να την ολοληρώσης αλλιώς θα απορριφθεί.",
             banner_url=config.APPLICATIONS_BANNER_URL,
         )
         add_separator(container)
@@ -108,7 +108,7 @@ class Applications(commands.Cog):
 
         container = build_base_container(
             title=f"{data['label']} Application",
-            description=f"{user.mention}\nΠάτησε **Start Your Application** όταν είσαι έτοιμος/η.",
+            description=f"{user.mention}\nΠάτησε **Start Your Application** όταν είσαι έτοιμος/η. Χρόνος ολοκλήρωσης:30 λεπτά",
         )
         add_separator(container)
         start_btn = ui.Button(label="Start Your Application", style=discord.ButtonStyle.success, custom_id=f"app_start:{channel.id}")
@@ -127,7 +127,7 @@ class Applications(commands.Cog):
         questions = config.APPLICATION_TYPES[type_key]["questions"]
         container = build_base_container(
             title=f"Ερώτηση {step + 1}/{len(questions)}",
-            description=questions[step] + "\n\n*Γράψε την απάντηση σου εδώ στο channel.*",
+            description=questions[step] + "\n\n*Γράψε την απάντηση σου στο channel.*",
         )
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
@@ -137,12 +137,12 @@ class Applications(commands.Cog):
         store = storage.get_store(STORE_NAME)
         info = store.get(str(channel_id))
         if not info or interaction.user.id != info["user_id"]:
-            await interaction.response.send_message("Μόνο αυτός που έκανε την αίτηση μπορεί να την ξεκινήσει.", ephemeral=True)
+            await interaction.response.send_message("Μόνο αυτός που έκανε την αίτηση μπορεί να την ξεκινήσει βλακάκο.", ephemeral=True)
             return
         info["status"] = "answering"
         store[str(channel_id)] = info
         storage.save(STORE_NAME, store)
-        await interaction.response.send_message("📝 Ξεκινάμε!", ephemeral=True)
+        await interaction.response.send_message("📝 Ξεκινάμε.", ephemeral=True)
         await self.send_question(interaction.channel, info["type"], 0)
 
     # ---------------- on_message -> καταγραφή απαντήσεων ----------------
@@ -194,7 +194,7 @@ class Applications(commands.Cog):
 
         container = build_base_container(
             title=f"📋 Νέα Αίτηση — {type_label}",
-            description=f"Αιτών: {applicant.mention if applicant else info['user_id']}",
+            description=f"User: {applicant.mention if applicant else info['user_id']}",
         )
         add_separator(container)
         for q, a in zip(questions, info["answers"]):
@@ -215,7 +215,7 @@ class Applications(commands.Cog):
         store[str(channel_id)] = info
         storage.save(STORE_NAME, store)
 
-        await interaction.response.send_message("✅ Η αίτηση στάλθηκε! Θα ενημερωθείς με DM.", ephemeral=True)
+        await interaction.response.send_message("✅ Η αίτηση στάλθηκε! Θα ενημερωθείς με DΜ, φρόντισε να μην τα έχεις κλειστά.", ephemeral=True)
 
     # ---------------- ACCEPT / DENY ----------------
     async def finalize_application(self, interaction: discord.Interaction, channel_id: int, *, accepted: bool, reason: str | None = None):
@@ -233,7 +233,7 @@ class Applications(commands.Cog):
             if role and applicant:
                 await applicant.add_roles(role, reason="Application accepted")
             info["status"] = "accepted"
-            dm_text = f"✅ Η αίτηση σου ({config.APPLICATION_TYPES[info['type']]['label']}) έγινε **δεκτή**! Θα πάρεις ρόλο 'Waiting for Interview'."
+            dm_text = f"✅ Η αίτηση σου ({config.APPLICATION_TYPES[info['type']]['label']}) έγινε **δεκτή**! Θα πάρεις ρόλο 'Waiting for Interview'. Ενημέρωσε στο αντίστοιχο channel πότε μπορείς για το interview σου."
         else:
             info["status"] = "denied"
             dm_text = f"❌ Η αίτηση σου ({config.APPLICATION_TYPES[info['type']]['label']}) **απορρίφθηκε**.\nΛόγος: {reason}"
