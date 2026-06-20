@@ -121,7 +121,7 @@ class Tickets(commands.Cog):
         category = guild.get_channel(data["category_id"])
         if category is None:
             await interaction.response.send_message(
-                "⚠️ Δεν βρέθηκε το category. Έλεγξε το config.py.", ephemeral=True
+                "⚠️ Δεν βρέθηκε το category.", ephemeral=True
             )
             return
 
@@ -190,7 +190,7 @@ class Tickets(commands.Cog):
 
         if interaction.user.id == info["opener_id"]:
             await interaction.response.send_message(
-                "Δεν μπορείς να κλείσεις το δικό σου ticket — ζήτα από κάποιον άλλον.", ephemeral=True
+                "Δεν μπορείς να κλείσεις το δικό σου ticket.", ephemeral=True
             )
             return
 
@@ -209,7 +209,7 @@ class Tickets(commands.Cog):
         store = storage.get_store(STORE_NAME)
         info = store.get(str(channel_id))
         if not info:
-            await interaction.response.send_message("Αυτό το ticket δεν υπάρχει πια στο σύστημα.", ephemeral=True)
+            await interaction.response.send_message("Αυτό το ticket δεν υπάρχει πια.", ephemeral=True)
             return
 
         if not has_roles(interaction.user, config.STAFF_TEAM_ROLE_IDS):
@@ -256,20 +256,20 @@ class Tickets(commands.Cog):
     # ---------------------------------------------------
     # Slash commands - στέλνουν τα panels
     # ---------------------------------------------------
-    @app_commands.command(name="panel-support", description="Στέλνει το Support ticket panel (dropdown)")
+    @app_commands.command(name="panel-support", description="Στέλνει το Support ticket panel")
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_support(self, interaction: discord.Interaction):
         ttypes = _ticket_types()
         container = build_base_container(
-            title="🎫 Support Tickets",
-            description="Επίλεξε κατηγορία από το μενού παρακάτω για να ανοίξεις ticket.",
+            title="Panamera Roleplay - Support Tickets",
+            description="Επίλεξε κατηγορία από το μενού παρακάτω για να ανοίξεις ticket. Περιέγραψε το θέμα που σε απασχολεί και θα σε βοηθήσουμε σύντομα.",
             banner_url=config.TICKET_SUPPORT_BANNER_URL,
             thumbnail_url=config.TICKET_SUPPORT_THUMBNAIL_URL,
         )
         add_separator(container)
         options = [
             discord.SelectOption(label=ttypes[k]["label"], value=k, emoji=ttypes[k]["emoji"] or None)
-            for k in ("ownership", "report", "support", "bug")
+            for k in ("ownership", "report", "support", "bug", "anticheat")
         ]
         select = ui.Select(placeholder="Επίλεξε κατηγορία...", options=options, custom_id="support_ticket_select")
         add_action_row(container, select)
@@ -283,24 +283,24 @@ class Tickets(commands.Cog):
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_civilian_job(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="civilian_job", title="👷 Civilian Job Application",
-            description="Πάτησε το κουμπί για να κάνεις αίτηση για Civilian Job.",
+            interaction, key="civilian_job", title="Panamera Roleplay - Civilian Job Ticket",
+            description="Πάτησε το κουμπί για να πάρεις Civilian Job.",
         )
 
     @app_commands.command(name="panel-criminal-job", description="Στέλνει το Criminal Job panel")
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_criminal_job(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="criminal_job", title="🔫 Criminal Job Application",
-            description="Πάτησε το κουμπί για να κάνεις αίτηση για Criminal Job.",
+            interaction, key="criminal_job", title="Panamera Roleplay - Criminal Job Ticket",
+            description="Πάτησε το κουμπί για να πάρεις Criminal Job.",
         )
 
     @app_commands.command(name="panel-donate", description="Στέλνει το Donate panel")
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_donate(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="donate", title="💎 Donate",
-            description="Πάτησε το κουμπί για να ανοίξεις donate ticket.",
+            interaction, key="donate", title="Panamera Roleplay -  Donate Ticket",
+            description="Πάτησε το κουμπί για να ανοίξεις donate ticket. Ευχαριστούμε για την υποστήριξη!",
         )
 
     async def _send_button_panel(self, interaction: discord.Interaction, *, key: str, title: str, description: str):
