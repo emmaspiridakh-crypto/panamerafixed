@@ -58,6 +58,12 @@ def _ticket_types() -> dict:
             "category_id": config.CAT_TICKET_BUG_ID,
             "view_roles": [config.DEVELOPER_ROLE_ID, config.OWNERSHIP_ROLE_ID],
         },
+        "anticheat": {
+            "label": "Anticheat",
+            "emoji": emoji("tickets", "anticheat"),
+            "category_id": config.CAT_TICKET_ANTICHEAT_ID,
+            "view_roles": [config.ANTICHEAT_MANAGER_ID, config.OWNERSHIP_ROLE_ID],
+        },
         "civilian_job": {
             "label": "Civilian Job",
             "emoji": emoji("jobs", "civilian"),
