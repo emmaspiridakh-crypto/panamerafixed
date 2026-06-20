@@ -96,7 +96,7 @@ class Moderation(commands.Cog):
     async def timeout_cmd(self, ctx: commands.Context, member: discord.Member, duration: str, *, reason: str = None):
         delta = _parse_duration(duration)
         if delta is None:
-            await ctx.send("⚠️ Λάθος format διάρκειας. Χρήση: 10s / 10m / 1h / 1d")
+            await ctx.send("⚠️ Λάθος χρόνος βλάκα. Κάνε: 10s / 10m / 1h / 1d")
             return
         await member.timeout(delta, reason=reason)
         await ctx.send(f"⏱️ Ο {member.mention} πήρε timeout για {duration}.")
@@ -152,7 +152,7 @@ class Moderation(commands.Cog):
     @is_founder_only()
     async def dmall_cmd(self, ctx: commands.Context, *, text: str):
         sent, failed = 0, 0
-        status_msg = await ctx.send("📨 Στέλνω DM σε όλα τα μέλη... (αυτό μπορεί να πάρει ώρα)")
+        status_msg = await ctx.send("📨 Στέλνετε βλάκα περίμενε")
         for member in ctx.guild.members:
             if member.bot:
                 continue
@@ -171,11 +171,11 @@ class Moderation(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error):
         if isinstance(error, commands.CheckFailure):
-            await ctx.send("⛔ Δεν έχεις δικαίωμα να χρησιμοποιήσεις αυτή την εντολή.", delete_after=5)
+            await ctx.send("⛔ Δεν έχεις δικαίωμα να χρησιμοποιήσεις την εντολή.", delete_after=5)
         elif isinstance(error, commands.MemberNotFound):
-            await ctx.send("⚠️ Δεν βρέθηκε αυτό το μέλος.", delete_after=5)
+            await ctx.send("⚠️ Δεν βρέθηκε ο μπρατ.", delete_after=5)
         elif isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"⚠️ Λείπει παράμετρος: `{error.param.name}`", delete_after=5)
+            await ctx.send(f"⚠️ Λείπει το id ή το username: `{error.param.name}`", delete_after=5)
 
 
 async def setup(bot: commands.Bot):
