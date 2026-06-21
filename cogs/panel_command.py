@@ -45,8 +45,6 @@ class PanelCommand(commands.Cog):
             ),
             inline=False,
         )
-        embed.add_field(name="Αυτή την εντολή", value="`!panel`", inline=False)
-
         await ctx.send(embed=embed)
 
 
