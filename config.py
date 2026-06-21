@@ -71,6 +71,9 @@ TICKET_DONATE_THUMBNAIL_URL = "https://i.imgur.com/RRjWHDE.gif"
 # Channel όπου γίνεται ping το staff team όταν ανοίγει ΟΠΟΙΟΔΗΠΟΤΕ ticket (support/jobs/donate) ή temp voice
 STAFF_PING_CHANNEL_ID = 1517141632053547188  # PLACEHOLDER
 
+# Ticket logs (open + close) - ΞΕΧΩΡΙΣΤΟ από το STAFF_PING_CHANNEL_ID
+LOG_TICKETS_CHANNEL_ID = 1516805389642109013  # PLACEHOLDER
+
 # =========================================================
 # SUGGESTIONS
 # =========================================================
@@ -99,6 +102,9 @@ LOG_CHANNELS_CHANNEL_ID   = 1516805389126209629  # PLACEHOLDER (create/delete/ed
 LOG_MESSAGES_CHANNEL_ID   = 1516805389126209630  # PLACEHOLDER (edit/delete messages)
 LOG_VOICE_CHANNEL_ID      = 1516805389126209633 # PLACEHOLDER
 LOG_APPLICATIONS_CHANNEL_ID = 1516805389264355483   # PLACEHOLDER
+
+# Invite logs: ποιος προσκάλεσε ποιον, πόσα invites/μέλη μέσα/έχουν φύγει ανά inviter
+INVITE_LOG_CHANNEL_ID = 1518394225933422672  # PLACEHOLDER
 
 # Command logs (Requirement 5) - ξεχωριστό log ανά εντολή, εκτός say/say2/dmall (κοινό)
 LOG_BAN_CHANNEL_ID          =  1516805389126209631 # PLACEHOLDER
