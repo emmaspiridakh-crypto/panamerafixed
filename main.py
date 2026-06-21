@@ -36,6 +36,8 @@ COGS = [
     "cogs.applications",
     "cogs.server_status",
     "cogs.panel_command",
+    "cogs.autorole",
+    "cogs.invite_tracking",
 ]
 
 
