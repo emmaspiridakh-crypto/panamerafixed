@@ -45,6 +45,14 @@ class PanelCommand(commands.Cog):
             ),
             inline=False,
         )
+        embed.add_field(
+            name="Applications Lock (Ownership only)",
+            value=(
+                "`/lockapplication <name>`\n`/unlockapplication <name>`\n"
+                "`/lockallapplications`\n`/unlockallapplications`"
+            ),
+            inline=False,
+        )
         await ctx.send(embed=embed)
 
 
