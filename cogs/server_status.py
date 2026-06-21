@@ -44,10 +44,10 @@ class ServerStatus(commands.Cog):
         members, online, boosts, bots = _counts(guild)
 
         targets = {
-            "members": (config.STATUS_MEMBERS_CHANNEL_ID, f"Members: {members}"),
-            "online": (config.STATUS_ONLINE_CHANNEL_ID, f"Online: {online}"),
-            "boosts": (config.STATUS_BOOSTS_CHANNEL_ID, f"Boosts: {boosts}"),
-            "bots": (config.STATUS_BOTS_CHANNEL_ID, f"Bots: {bots}"),
+            "members": (config.STATUS_MEMBERS_CHANNEL_ID, f"Members: {:busts_in_silhouette: members}"),
+            "online": (config.STATUS_ONLINE_CHANNEL_ID, f"Online: {:green_circle: online}"),
+            "boosts": (config.STATUS_BOOSTS_CHANNEL_ID, f"Boosts: {:rocket: boosts}"),
+            "bots": (config.STATUS_BOTS_CHANNEL_ID, f"Bots: {:robot: bots}"),
         }
 
         for key, (channel_id, new_name) in targets.items():
