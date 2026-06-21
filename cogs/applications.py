@@ -24,11 +24,24 @@ from utils.permissions import has_roles
 from utils.components import build_base_container, add_separator, add_text, add_action_row, add_section_with_button
 
 STORE_NAME = "applications"  # data/applications.json -> {channel_id: {...}}
+LOCKS_STORE = "application_locks"  # data/application_locks.json -> {type_key: true/false}
 
 
 def _safe_name(text: str) -> str:
     text = text.lower().strip().replace(" ", "-")
     return "".join(c for c in text if c.isalnum() or c == "-")[:90]
+
+
+def _is_locked(type_key: str) -> bool:
+    locks = storage.get_store(LOCKS_STORE)
+    return bool(locks.get(type_key, False))
+
+
+# Choices για τα slash commands lock/unlock (φτιάχνονται μία φορά από το config)
+APPLICATION_TYPE_CHOICES = [
+    app_commands.Choice(name=data["label"], value=key)
+    for key, data in config.APPLICATION_TYPES.items()
+]
 
 
 class DenyReasonModal(ui.Modal, title="Αιτιολογία Απόρριψης"):
@@ -53,7 +66,7 @@ class Applications(commands.Cog):
     async def panel_applications(self, interaction: discord.Interaction):
         container = build_base_container(
             title="📋 Applications",
-            description="Επίλεξε σε τι θες να κάνεις αίτηση και πάτησε **Apply.****Απαγορεύτε η χρήση του ΑΙ**. Έχεις 30 λεπτά να την ολοληρώσης αλλιώς θα απορριφθεί.",
+            description="Επίλεξε σε τι θες να κάνεις αίτηση και πάτησε **Apply**.**Απαγορεύτε η χρήση του ΑΙ**. Έχεις 30 λεπτά να την ολοληρώσης αλλιώς θα απορριφθεί.",
             banner_url=config.APPLICATIONS_BANNER_URL,
         )
         add_separator(container)
@@ -72,6 +85,13 @@ class Applications(commands.Cog):
         data = config.APPLICATION_TYPES.get(type_key)
         if not data:
             await interaction.response.send_message("Άγνωστος τύπος αίτησης.", ephemeral=True)
+            return
+
+        if _is_locked(type_key):
+            await interaction.response.send_message(
+                f"🔒 Οι αιτήσεις για **{data['label']}** είναι κλειδωμένες αυτή τη στιγμή. Δοκίμασε ξανά αργότερα.",
+                ephemeral=True,
+            )
             return
 
         guild = interaction.guild
@@ -238,6 +258,8 @@ class Applications(commands.Cog):
             info["status"] = "denied"
             dm_text = f"❌ Η αίτηση σου ({config.APPLICATION_TYPES[info['type']]['label']}) **απορρίφθηκε**.\nΛόγος: {reason}"
 
+        info["decided_by"] = interaction.user.id
+        info["decision_reason"] = reason
         store[str(channel_id)] = info
         storage.save(STORE_NAME, store)
 
@@ -247,12 +269,26 @@ class Applications(commands.Cog):
             except discord.Forbidden:
                 pass
 
-        # Αφαίρεση κουμπιών από το log message
-        status_text = "✅ **Accepted**" if accepted else f"❌ **Denied** — {reason}"
+        # Ξαναχτίζουμε το ΠΛΗΡΕΣ container με όλες τις ερωτήσεις/απαντήσεις +
+        # προσθέτουμε ποιος αποφάσισε - απλά ΧΩΡΙΣ τα κουμπιά Accept/Deny πια.
+        type_label = config.APPLICATION_TYPES[info["type"]]["label"]
+        questions = config.APPLICATION_TYPES[info["type"]]["questions"]
+
+        if accepted:
+            status_text = f"✅ **Accepted**\nΧειριστής: {interaction.user.mention}"
+        else:
+            status_text = f"❌ **Denied**\nΧειριστής: {interaction.user.mention}\nΛόγος: {reason}"
+
         container = build_base_container(
-            title=f"📋 Αίτηση — {config.APPLICATION_TYPES[info['type']]['label']}",
-            description=f"Αιτών: {applicant.mention if applicant else info['user_id']}\n\n{status_text}\nΧειριστής: {interaction.user.mention}",
+            title=f"📋 Αίτηση — {type_label}",
+            description=f"Αιτών: {applicant.mention if applicant else info['user_id']}",
         )
+        add_separator(container)
+        for q, a in zip(questions, info["answers"]):
+            add_text(container, f"**{q}**\n{a}")
+        add_separator(container)
+        add_text(container, status_text)
+
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
 
@@ -293,6 +329,41 @@ class Applications(commands.Cog):
                 await applicant.send(f"🔔 Έχεις ειδοποίηση στην αίτηση σου: {interaction.channel.mention}")
             except discord.Forbidden:
                 pass
+
+    # ---------------- LOCK / UNLOCK ----------------
+    @app_commands.command(name="lockapplication", description="Κλειδώνει έναν τύπο αίτησης")
+    @app_commands.describe(name="Ο τύπος αίτησης προς κλείδωμα")
+    @app_commands.choices(name=APPLICATION_TYPE_CHOICES)
+    @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID)
+    async def lockapplication(self, interaction: discord.Interaction, name: app_commands.Choice[str]):
+        locks = storage.get_store(LOCKS_STORE)
+        locks[name.value] = True
+        storage.save(LOCKS_STORE, locks)
+        await interaction.response.send_message(f"🔒 Οι αιτήσεις **{name.name}** κλειδώθηκαν.", ephemeral=True)
+
+    @app_commands.command(name="unlockapplication", description="Ξεκλειδώνει έναν τύπο αίτησης")
+    @app_commands.describe(name="Ο τύπος αίτησης προς ξεκλείδωμα")
+    @app_commands.choices(name=APPLICATION_TYPE_CHOICES)
+    @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID)
+    async def unlockapplication(self, interaction: discord.Interaction, name: app_commands.Choice[str]):
+        locks = storage.get_store(LOCKS_STORE)
+        locks[name.value] = False
+        storage.save(LOCKS_STORE, locks)
+        await interaction.response.send_message(f"🔓 Οι αιτήσεις **{name.name}** ξεκλειδώθηκαν.", ephemeral=True)
+
+    @app_commands.command(name="lockallapplications", description="Κλειδώνει ΟΛΟΥΣ τους τύπους αιτήσεων μαζί")
+    @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID)
+    async def lockallapplications(self, interaction: discord.Interaction):
+        locks = {key: True for key in config.APPLICATION_TYPES}
+        storage.save(LOCKS_STORE, locks)
+        await interaction.response.send_message("🔒 Όλες οι αιτήσεις κλειδώθηκαν.", ephemeral=True)
+
+    @app_commands.command(name="unlockallapplications", description="Ξεκλειδώνει ΟΛΟΥΣ τους τύπους αιτήσεων μαζί")
+    @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID)
+    async def unlockallapplications(self, interaction: discord.Interaction):
+        locks = {key: False for key in config.APPLICATION_TYPES}
+        storage.save(LOCKS_STORE, locks)
+        await interaction.response.send_message("🔓 Όλες οι αιτήσεις ξεκλειδώθηκαν.", ephemeral=True)
 
     # ---------------- Κεντρικός listener ----------------
     @commands.Cog.listener()
