@@ -261,7 +261,7 @@ class Tickets(commands.Cog):
     async def panel_support(self, interaction: discord.Interaction):
         ttypes = _ticket_types()
         container = build_base_container(
-            title="Panamera Roleplay - Support Tickets",
+            title="Vision Roleplay - Support Tickets",
             description="Επίλεξε κατηγορία από το μενού παρακάτω για να ανοίξεις ticket. Περιέγραψε το θέμα που σε απασχολεί και θα σε βοηθήσουμε σύντομα.",
             banner_url=config.TICKET_SUPPORT_BANNER_URL,
             thumbnail_url=config.TICKET_SUPPORT_THUMBNAIL_URL,
@@ -283,7 +283,7 @@ class Tickets(commands.Cog):
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_civilian_job(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="civilian_job", title="Panamera Roleplay - Civilian Job Ticket",
+            interaction, key="civilian_job", title="Vision Roleplay - Civilian Job Ticket",
             description="Πάτησε το κουμπί για να πάρεις Civilian Job.",
         )
 
@@ -291,7 +291,7 @@ class Tickets(commands.Cog):
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_criminal_job(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="criminal_job", title="Panamera Roleplay - Criminal Job Ticket",
+            interaction, key="criminal_job", title="Vision Roleplay - Criminal Job Ticket",
             description="Πάτησε το κουμπί για να πάρεις Criminal Job.",
         )
 
@@ -299,7 +299,7 @@ class Tickets(commands.Cog):
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_donate(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="donate", title="Panamera Roleplay -  Donate Ticket",
+            interaction, key="donate", title="Vision Roleplay -  Donate Ticket",
             description="Πάτησε το κουμπί για να ανοίξεις donate ticket. Ευχαριστούμε για την υποστήριξη!",
         )
 
