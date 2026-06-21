@@ -169,12 +169,18 @@ class Tickets(commands.Cog):
         view.add_item(container)
         await new_channel.send(view=view)
 
-        # Ping staff team
-        ping_channel = guild.get_channel(config.STAFF_PING_CHANNEL_ID)
-        if ping_channel:
-            await ping_channel.send(
-                f"{emoji('tickets', 'ticket')} Νέο ticket: {new_channel.mention} από {opener.mention} ({data['label']})"
+        # Log άνοιγμα ticket (ΞΕΧΩΡΙΣΤΟ από το staff ping channel)
+        log_channel = guild.get_channel(config.LOG_TICKETS_CHANNEL_ID)
+        if log_channel:
+            embed = discord.Embed(
+                title=f"{emoji('tickets', 'ticket')} Ticket Opened",
+                color=discord.Colour.green(),
+                timestamp=discord.utils.utcnow(),
             )
+            embed.add_field(name="Τύπος", value=data["label"], inline=True)
+            embed.add_field(name="Channel", value=new_channel.mention, inline=True)
+            embed.add_field(name="Άνοιξε από", value=f"{opener.mention} (`{opener.id}`)", inline=False)
+            await log_channel.send(embed=embed)
 
         await interaction.response.send_message(f"✅ Το ticket σου: {new_channel.mention}", ephemeral=True)
 
@@ -195,6 +201,23 @@ class Tickets(commands.Cog):
             return
 
         await interaction.response.send_message("🔒 Το ticket κλείνει σε 5 δευτερόλεπτα...", ephemeral=False)
+
+        # Log κλείσιμο ticket (πριν διαγραφεί το channel)
+        log_channel = interaction.guild.get_channel(config.LOG_TICKETS_CHANNEL_ID)
+        if log_channel:
+            ttypes = _ticket_types()
+            type_label = ttypes.get(info["type"], {}).get("label", info["type"])
+            embed = discord.Embed(
+                title=f"{emoji('tickets', 'close')} Ticket Closed",
+                color=discord.Colour.red(),
+                timestamp=discord.utils.utcnow(),
+            )
+            embed.add_field(name="Τύπος", value=type_label, inline=True)
+            embed.add_field(name="Channel", value=f"`#{interaction.channel.name}`", inline=True)
+            embed.add_field(name="Άνοιξε από", value=f"<@{info['opener_id']}>", inline=False)
+            embed.add_field(name="Έκλεισε από", value=f"{interaction.user.mention} (`{interaction.user.id}`)", inline=False)
+            await log_channel.send(embed=embed)
+
         store.pop(str(channel_id), None)
         storage.save(STORE_NAME, store)
         await discord.utils.sleep_until(discord.utils.utcnow() + __import__("datetime").timedelta(seconds=5))
