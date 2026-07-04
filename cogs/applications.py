@@ -235,7 +235,7 @@ class Applications(commands.Cog):
         store[str(channel_id)] = info
         storage.save(STORE_NAME, store)
 
-        await interaction.response.send_message("✅ Η αίτηση στάλθηκε! Θα ενημερωθείς με DΜ, φρόντισε να μην τα έχεις κλειστά.", ephemeral=True)
+        await interaction.response.send_message("✅ Η αίτηση στάλθηκε! Θα ενημερωθείς με DΜ, φρόντισε να μην τα έχεις κλειστά.", ephemeral=False)
 
     # ---------------- ACCEPT / DENY ----------------
     async def finalize_application(self, interaction: discord.Interaction, channel_id: int, *, accepted: bool, reason: str | None = None):
@@ -275,13 +275,13 @@ class Applications(commands.Cog):
         questions = config.APPLICATION_TYPES[info["type"]]["questions"]
 
         if accepted:
-            status_text = f"✅ **Accepted**\nΧειριστής: {interaction.user.mention}"
+            status_text = f"✅ **Accepted**\User: {interaction.user.mention}"
         else:
-            status_text = f"❌ **Denied**\nΧειριστής: {interaction.user.mention}\nΛόγος: {reason}"
+            status_text = f"❌ **Denied**\User: {interaction.user.mention}\nΛόγος: {reason}"
 
         container = build_base_container(
-            title=f"📋 Αίτηση — {type_label}",
-            description=f"Αιτών: {applicant.mention if applicant else info['user_id']}",
+            title=f" Αίτηση — {type_label}",
+            description=f"User: {applicant.mention if applicant else info['user_id']}",
         )
         add_separator(container)
         for q, a in zip(questions, info["answers"]):
