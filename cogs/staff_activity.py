@@ -101,8 +101,8 @@ class StaffActivity(commands.Cog):
         on_duty_text = "\n".join(on_duty_lines) if on_duty_lines else "Κανείς δεν είναι on duty αυτή τη στιγμή."
 
         container = build_base_container(
-            title="📊 Staff Activity",
-            description="Leaderboard χρόνου & live status.",
+            title="Staff Activity",
+            description="Leaderboard χρόνου & live status. Μπες στο On Duty 1 για να ξεκινήσει ο χρόνος σου.",
             banner_url=config.STAFF_ACTIVITY_BANNER_URL,
         )
         add_separator(container)
