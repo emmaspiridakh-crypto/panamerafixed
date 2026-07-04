@@ -275,9 +275,9 @@ class Applications(commands.Cog):
         questions = config.APPLICATION_TYPES[info["type"]]["questions"]
 
         if accepted:
-            status_text = f"✅ **Accepted**\User: {interaction.user.mention}"
+            status_text = f"✅ **Accepted**\nUser: {interaction.user.mention}"
         else:
-            status_text = f"❌ **Denied**\User: {interaction.user.mention}\nΛόγος: {reason}"
+            status_text = f"❌ **Denied**\nUser: {interaction.user.mention}\nΛόγος: {reason}"
 
         container = build_base_container(
             title=f" Αίτηση — {type_label}",
