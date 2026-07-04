@@ -65,7 +65,7 @@ class Applications(commands.Cog):
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_applications(self, interaction: discord.Interaction):
         container = build_base_container(
-            title="Direct Roleplay - Applications",
+            title="Royal Roleplay - Applications",
             description="Επίλεξε σε τι θες να κάνεις αίτηση και πάτησε **Apply**.**Απαγορεύτε η χρήση του ΑΙ**. Έχεις 30 λεπτά να την ολοληρώσης αλλιώς θα απορριφθεί.",
             banner_url=config.APPLICATIONS_BANNER_URL,
         )
