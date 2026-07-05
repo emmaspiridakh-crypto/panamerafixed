@@ -26,7 +26,7 @@ def build_base_container(
     description: str = "",
     banner_url: str | None = None,
     thumbnail_url: str | None = None,
-    color: discord.Colour = discord.Colour.blurple(),
+     color: discord.Colour = discord.Colour.from_str("#FEE75C"),
 ) -> ui.Container:
     """Φτιάχνει ένα Container με optional banner πάνω-πάνω + τίτλο/περιγραφή
     (με optional thumbnail δίπλα)."""
