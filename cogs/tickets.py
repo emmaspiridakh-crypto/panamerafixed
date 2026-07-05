@@ -152,7 +152,7 @@ class Tickets(commands.Cog):
         container = build_base_container(
             title=f"{data['emoji']} {data['label']} Ticket",
             description=f"Άνοιξε από: {opener.mention}\nΠερίγραψε το θέμα σου, η ομάδα θα απαντήσει σύντομα.",
-            color=discord.Colour.blurple(),
+            color=discord.Colour.yellow(),
         )
         add_separator(container)
         close_btn = ui.Button(
