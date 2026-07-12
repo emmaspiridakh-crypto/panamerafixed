@@ -18,7 +18,7 @@ Custom emojis χωρισμένα ανά κατηγορία.
 
 EMOJIS = {
     "tickets": {
-        "ownership": "<:ownership:1522610421540978708>",
+        "ownership": "<:ownership:1525881027841757284>",
         "report": "<a:report:1523097248689422497>",
         "support": "<a:support:1523094283605905509>",
         "bug": "<:bug:1522610156326883488>",
