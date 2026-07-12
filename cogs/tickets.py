@@ -284,7 +284,7 @@ class Tickets(commands.Cog):
     async def panel_support(self, interaction: discord.Interaction):
         ttypes = _ticket_types()
         container = build_base_container(
-            title="Royal Roleplay - Support Tickets",
+            title="Warzone Reborn Roleplay - Support Tickets",
             description="Επίλεξε κατηγορία από το μενού παρακάτω για να ανοίξεις ticket. Περιέγραψε το θέμα που σε απασχολεί και θα σε βοηθήσουμε σύντομα.",
             banner_url=config.TICKET_SUPPORT_BANNER_URL,
             thumbnail_url=config.TICKET_SUPPORT_THUMBNAIL_URL,
@@ -306,7 +306,7 @@ class Tickets(commands.Cog):
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_civilian_job(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="civilian_job", title="Royal Roleplay - Civilian Job Ticket",
+            interaction, key="civilian_job", title="Warzone Reborn Roleplay - Civilian Job Ticket",
             description="Πάτησε το κουμπί για να πάρεις Civilian Job.",
         )
 
@@ -314,7 +314,7 @@ class Tickets(commands.Cog):
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_criminal_job(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="criminal_job", title="Royal Roleplay - Criminal Job Ticket",
+            interaction, key="criminal_job", title="Warzone Reborn Roleplay - Criminal Job Ticket",
             description="Πάτησε το κουμπί για να πάρεις Criminal Job.",
         )
 
@@ -322,7 +322,7 @@ class Tickets(commands.Cog):
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_donate(self, interaction: discord.Interaction):
         await self._send_button_panel(
-            interaction, key="donate", title="Royal Roleplay -  Donate Ticket",
+            interaction, key="donate", title="Warzone Reborn Roleplay -  Donate Ticket",
             description="Πάτησε το κουμπί για να ανοίξεις donate ticket. Ευχαριστούμε για την υποστήριξη!",
         )
 
