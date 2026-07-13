@@ -44,7 +44,7 @@ STAFF_TEAM_ROLE_IDS = [STAFF_ROLE_ID, MANAGER_ROLE_ID, OWNERSHIP_ROLE_ID]
 # =========================================================
 TICKET_SUPPORT_CHANNEL_ID = 1510300349582413858  # PLACEHOLDER: πού θα σταλεί το panel (slash command target)
 TICKET_SUPPORT_BANNER_URL = "https://i.imgur.com/0xmFvSH.jpeg"
-TICKET_SUPPORT_THUMBNAIL_URL = "https://i.imgur.com/qxBzele.png"
+TICKET_SUPPORT_THUMBNAIL_URL = "https://i.imgur.com/Ntirila.gif"
 
 CAT_TICKET_OWNERSHIP_ID =  1523076534607544400 # PLACEHOLDER category
 CAT_TICKET_REPORT_ID    =  1523076682704093214 # PLACEHOLDER category
@@ -58,7 +58,7 @@ CAT_TICKET_ANTICHEAT_ID = 1523076429745750141 # PLACEHOLDER category
 CAT_JOBS_ID = 1523076883930026024 # PLACEHOLDER (ΚΟΙΝΟ category civilian + criminal)
 
 TICKET_JOBS_BANNER_URL = "https://i.imgur.com/0xmFvSH.jpeg"
-TICKET_JOBS_THUMBNAIL_URL = "https://i.imgur.com/qxBzele.png"
+TICKET_JOBS_THUMBNAIL_URL = "https://i.imgur.com/Ntirila.gif"
 
 # =========================================================
 # TICKET SYSTEM #3 - DONATE (button, δικό του category)
@@ -66,7 +66,7 @@ TICKET_JOBS_THUMBNAIL_URL = "https://i.imgur.com/qxBzele.png"
 CAT_DONATE_ID = 1523077060506157126 # PLACEHOLDER category
 
 TICKET_DONATE_BANNER_URL = "https://i.imgur.com/0xmFvSH.jpeg"
-TICKET_DONATE_THUMBNAIL_URL = "https://i.imgur.com/qxBzele.png"
+TICKET_DONATE_THUMBNAIL_URL = "https://i.imgur.com/Ntirila.gif"
 
 # Channel όπου γίνεται ping το staff team όταν ανοίγει ΟΠΟΙΟΔΗΠΟΤΕ ticket (support/jobs/donate) ή temp voice
 STAFF_PING_CHANNEL_ID = 1523073829122084885  # PLACEHOLDER
