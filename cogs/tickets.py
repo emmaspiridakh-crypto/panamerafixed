@@ -107,7 +107,6 @@ class Tickets(commands.Cog):
         guild = interaction.guild
         opener = interaction.user
 
-        # Έλεγχος αν έχει ήδη ανοιχτό ticket αυτού του τύπου
         store = storage.get_store(STORE_NAME)
         for ch_id, info in store.items():
             if info.get("opener_id") == opener.id and info.get("type") == ticket_key:
@@ -140,7 +139,6 @@ class Tickets(commands.Cog):
             name=channel_name, category=category, overwrites=overwrites
         )
 
-        # Αποθήκευση
         store[str(new_channel.id)] = {
             "type": ticket_key,
             "opener_id": opener.id,
@@ -148,7 +146,6 @@ class Tickets(commands.Cog):
         }
         storage.save(STORE_NAME, store)
 
-        # Μήνυμα μέσα στο ticket
         container = build_base_container(
             title=f"{data['emoji']} {data['label']} Ticket",
             description=f"Άνοιξε από: {opener.mention}\nΠερίγραψε το θέμα σου, η ομάδα θα απαντήσει σύντομα.",
@@ -169,7 +166,6 @@ class Tickets(commands.Cog):
         view.add_item(container)
         await new_channel.send(view=view)
 
-        # Log άνοιγμα ticket (ΞΕΧΩΡΙΣΤΟ από το staff ping channel)
         log_channel = guild.get_channel(config.LOG_TICKETS_CHANNEL_ID)
         if log_channel:
             embed = discord.Embed(
@@ -202,7 +198,6 @@ class Tickets(commands.Cog):
 
         await interaction.response.send_message("🔒 Το ticket κλείνει σε 5 δευτερόλεπτα...", ephemeral=False)
 
-        # Log κλείσιμο ticket (πριν διαγραφεί το channel)
         log_channel = interaction.guild.get_channel(config.LOG_TICKETS_CHANNEL_ID)
         if log_channel:
             ttypes = _ticket_types()
@@ -290,8 +285,20 @@ class Tickets(commands.Cog):
             thumbnail_url=config.TICKET_SUPPORT_THUMBNAIL_URL,
         )
         add_separator(container)
+        _descriptions = {
+            "ownership": "Επικοινωνία αποκλειστικά με το Ownership",
+            "report": "Καταγγελία παίκτη ή μέλους staff",
+            "support": "Γενική υποστήριξη & ερωτήσεις",
+            "bug": "Αναφορά σφάλματος στο server ή bot",
+            "anticheat": "Αναφορά περιστατικού cheat/exploit",
+        }
         options = [
-            discord.SelectOption(label=ttypes[k]["label"], value=k, emoji=ttypes[k]["emoji"] or None)
+            discord.SelectOption(
+                label=ttypes[k]["label"],
+                value=k,
+                emoji=ttypes[k]["emoji"] or None,
+                description=_descriptions.get(k, ""),
+            )
             for k in ("ownership", "report", "support", "bug", "anticheat")
         ]
         select = ui.Select(placeholder="Επίλεξε κατηγορία...", options=options, custom_id="support_ticket_select")
@@ -307,7 +314,7 @@ class Tickets(commands.Cog):
     async def panel_civilian_job(self, interaction: discord.Interaction):
         await self._send_button_panel(
             interaction, key="civilian_job", title="Warzone Reborn Roleplay - Civilian Job Ticket",
-            description="Πάτησε το κουμπί για να πάρεις Civilian Job.",
+            description="Πάτησε το κουμπί και επικοινώνησε με τον αρμόδιο Manager για να πάρεις το civilian job σου.",
         )
 
     @app_commands.command(name="panel-criminal-job", description="Στέλνει το Criminal Job panel")
@@ -315,16 +322,63 @@ class Tickets(commands.Cog):
     async def panel_criminal_job(self, interaction: discord.Interaction):
         await self._send_button_panel(
             interaction, key="criminal_job", title="Warzone Reborn Roleplay - Criminal Job Ticket",
-            description="Πάτησε το κουμπί για να πάρεις Criminal Job.",
+            description="Πάτησε το κουμπί και επικοινώνησε με τον αρμόδιο Manager για να πάρεις το criminal job σου.",
         )
 
     @app_commands.command(name="panel-donate", description="Στέλνει το Donate panel")
     @app_commands.checks.has_any_role(config.OWNERSHIP_ROLE_ID, config.MANAGER_ROLE_ID, config.STAFF_ROLE_ID)
     async def panel_donate(self, interaction: discord.Interaction):
-        await self._send_button_panel(
-            interaction, key="donate", title="Warzone Reborn Roleplay -  Donate Ticket",
-            description="Πάτησε το κουμπί για να ανοίξεις donate ticket. Ευχαριστούμε για την υποστήριξη!",
+        ttypes = _ticket_types()
+        data = ttypes["donate"]
+
+        container = build_base_container(
+            title="Donate Terms & Information",
+            description=(
+                "Όταν κάνετε Donate υποστηρίζετε την λειτουργία και την ανάπτυξη του server, βοηθώντας μας να τον κρατάμε ενεργό και να τον βελτιώνουμε συνεχώς. "
+                "Παρόλα αυτά, όλοι οι παίκτες αντιμετωπίζονται το ίδιο ανεξάρτητα από το αν έχουν κάνει Donate ή όχι. "
+                "Το Donate αποτελεί καθαρά προαιρετική δωρεά και δεν είναι απαραίτητο για να παίξετε στον server. "
+                "Μετά την ολοκλήρωση μιας δωρεάς δεν υπάρχει δυνατότητα επιστροφής χρημάτων ή αλλαγής του πακέτου."
+            ),
+            banner_url=config.TICKET_DONATE_BANNER_URL,
+            thumbnail_url=config.TICKET_DONATE_THUMBNAIL_URL,
         )
+        add_separator(container)
+        add_text(container, (
+            "> Όλα τα Donates παραμένουν ενεργά μέχρι το ενδεχόμενο κλείσιμο του server. "
+            "Δεν υπάρχει δυνατότητα επιστροφής μετά από Wipe ή σε περίπτωση που κάποιος τιμωρηθεί με Ban.\n"
+            "> Απαγορεύεται αυστηρά η πώληση, ανταλλαγή ή μεταβίβαση Donate (είτε με πραγματικά χρήματα είτε με ingame χρήματα/αντικείμενα). "
+            "Σε περίπτωση παραβίασης, το Donate αφαιρείται χωρίς προειδοποίηση.\n"
+            "> Για να διατηρήσετε κάποιο Civilian ή Criminal Donate Job πρέπει να είστε ενεργοί στον server. "
+            "Αν ένα job παραμείνει ανενεργό για μεγάλο χρονικό διάστημα, μπορεί να αφαιρεθεί μετά από προειδοποίηση."
+        ))
+        add_separator(container)
+        add_text(container, (
+            "## Payment Methods\n"
+            "Οι διαθέσιμοι τρόποι πληρωμής για Donate στον server είναι:\n"
+            "> PayPal (Euro)\n"
+            "> Prepaid Paysafecard (Ελληνική)"
+        ))
+        add_separator(container)
+        add_text(container, (
+            "## Πώς να κάνετε Donate;\n"
+            "Για να πραγματοποιήσετε Donate μπορείτε να μπείτε στο παρακάτω κανάλι:\n"
+            "https://discord.com/channels/1510300348341031113/1510300349582413855"
+            "Εκεί μπορείτε να περιμένετε κάποιο μέλος <@&1510300348374323215> ή να ανοίξετε ένα Donate Ticket για εξυπηρέτηση. "
+            "Σε περίπτωση πληρωμής μέσω Paysafecard είναι απαραίτητο να στείλετε και φωτογραφία του αποκόμματος. "
+            "Ο χρόνος εξυπηρέτησης συνήθως κυμαίνεται μεταξύ **24 έως 96 ωρών**.\n\n"
+            "```Για πιο γρήγορη εξυπηρέτηση προτείνεται να ανοίξετε ένα ticket ώστε να μιλήσετε απευθείας με κάποιον υπεύθυνο για την διαδικασία Donate.```"
+        ))
+        add_separator(container)
+        btn = ui.Button(
+            label="Donate Ticket", style=discord.ButtonStyle.success,
+            emoji=data["emoji"] or None, custom_id="ticket_open_donate",
+        )
+        add_action_row(container, btn)
+
+        view = ui.LayoutView(timeout=None)
+        view.add_item(container)
+        await interaction.channel.send(view=view)
+        await interaction.response.send_message("✅ Στάλθηκε.", ephemeral=True)
 
     async def _send_button_panel(self, interaction: discord.Interaction, *, key: str, title: str, description: str):
         ttypes = _ticket_types()
