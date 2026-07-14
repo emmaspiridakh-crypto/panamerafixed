@@ -171,6 +171,7 @@ class Applications(commands.Cog):
         questions = config.APPLICATION_TYPES[type_key]["questions"]
         container = build_base_container(
             title=f"Ερώτηση {step + 1}/{len(questions)}",
+            description=questions[step] + "\n\n*Γράψε την απάντηση σου στο channel.*",
         )
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
