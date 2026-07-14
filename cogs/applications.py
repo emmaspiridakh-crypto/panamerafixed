@@ -66,14 +66,38 @@ class Applications(commands.Cog):
     async def panel_applications(self, interaction: discord.Interaction):
         container = build_base_container(
             title="Warzone Reborn Roleplay - Applications",
-            description="Επίλεξε σε τι θες να κάνεις αίτηση και πάτησε **Apply**.**Απαγορεύτε η χρήση του ΑΙ**. Έχεις 30 λεπτά να την ολοληρώσης αλλιώς θα απορριφθεί.",
+            description="Επίλεξε σε τι θες να κάνεις αίτηση και πάτησε **Apply**.**Απαγορεύτε η χρήση του ΑΙ**. Έχεις 30 λεπτά να την ολοκληρώσης αλλιώς θα απορριφθεί.",
             banner_url=config.APPLICATIONS_BANNER_URL,
         )
         add_separator(container)
+        _app_info = {
+            "elas": {
+                "description": "Γίνε μέλος της Ελληνικής Αστυνομίας. Προστάτεψε τους πολίτες & διατήρησε την τάξη.",
+                "emoji_key": "elas",
+            },
+            "ekab": {
+                "description": "Γίνε διασώστης του ΕΚΑΒ. Βοήθα τραυματίες & αντιμετώπισε έκτακτες καταστάσεις.",
+                "emoji_key": "ekab",
+            },
+            "staff": {
+                "description": "Γίνε μέλος της ομάδας staff. Διαχειρίσου reports & διατήρησε τους κανόνες.",
+                "emoji_key": "staff",
+            },
+            "manager": {
+                "description": "Θέση υψηλής ευθύνης. Διαχειρίσου το server & την ομάδα staff.",
+                "emoji_key": "manager",
+            },
+        }
         for key, data in config.APPLICATION_TYPES.items():
-            btn = ui.Button(label="Apply", style=discord.ButtonStyle.success,
-                             emoji=emoji("applications", "apply"), custom_id=f"app_apply:{key}")
-            add_section_with_button(container, text=f"**{data['label']}**", button=btn)
+            info = _app_info.get(key, {"description": "", "emoji_key": "apply"})
+            btn = ui.Button(
+                label="Apply",
+                style=discord.ButtonStyle.success,
+                emoji=emoji("applications", info["emoji_key"]),
+                custom_id=f"app_apply:{key}",
+            )
+            section_text = f"**{data['label']}**\n{info['description']}"
+            add_section_with_button(container, text=section_text, button=btn)
 
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
@@ -147,7 +171,6 @@ class Applications(commands.Cog):
         questions = config.APPLICATION_TYPES[type_key]["questions"]
         container = build_base_container(
             title=f"Ερώτηση {step + 1}/{len(questions)}",
-            description=questions[step] + "\n\n*Γράψε την απάντηση σου στο channel.*",
         )
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
