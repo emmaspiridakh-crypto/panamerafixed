@@ -1,14 +1,5 @@
 """
 cogs/applications.py
------------------------
-Requirement #9. Ροή:
-    1. Panel με λίστα τύπων αίτησης (banner πάνω, από κάτω TextDisplay + Apply button ανά τύπο)
-    2. Apply -> ανοίγει private channel με 3 κουμπιά: Start Your Application / Close / Ping Staff
-    3. Start -> bot στέλνει ερωτήσεις ΜΙΑ-ΜΙΑ, ο χρήστης απαντάει γράφοντας στο channel
-    4. Μετά την τελευταία ερώτηση -> κουμπί "Send"
-    5. Send -> στέλνει την αίτηση (Components V2) στο log channel: mention + Q&A + Accept/Deny
-    6. Deny απαιτεί reason (Modal). Σε Accept -> ρόλος "Waiting for Interview" + DM.
-       Σε Deny -> DM με την αιτιολογία. Και στις δύο περιπτώσεις τα κουμπιά εξαφανίζονται.
 """
 
 from __future__ import annotations
@@ -23,8 +14,8 @@ from utils import storage
 from utils.permissions import has_roles
 from utils.components import build_base_container, add_separator, add_text, add_action_row, add_section_with_button
 
-STORE_NAME = "applications"  # data/applications.json -> {channel_id: {...}}
-LOCKS_STORE = "application_locks"  # data/application_locks.json -> {type_key: true/false}
+STORE_NAME = "applications"
+LOCKS_STORE = "application_locks"
 
 
 def _safe_name(text: str) -> str:
@@ -37,7 +28,6 @@ def _is_locked(type_key: str) -> bool:
     return bool(locks.get(type_key, False))
 
 
-# Choices για τα slash commands lock/unlock (φτιάχνονται μία φορά από το config)
 APPLICATION_TYPE_CHOICES = [
     app_commands.Choice(name=data["label"], value=key)
     for key, data in config.APPLICATION_TYPES.items()
@@ -66,38 +56,39 @@ class Applications(commands.Cog):
     async def panel_applications(self, interaction: discord.Interaction):
         container = build_base_container(
             title="Warzone Reborn Roleplay - Applications",
-            description="Επίλεξε σε τι θες να κάνεις αίτηση και πάτησε **Apply**.**Απαγορεύτε η χρήση του ΑΙ**. Έχεις 30 λεπτά να την ολοκληρώσης αλλιώς θα απορριφθεί.",
+            description="Επίλεξε σε τι θες να κάνεις αίτηση από το παρακάτω μενού.\n**Απαγορεύεται η χρήση AI.** Έχεις 30 λεπτά να ολοκληρώσεις αλλιώς θα απορριφθεί.",
             banner_url=config.APPLICATIONS_BANNER_URL,
         )
         add_separator(container)
+
         _app_info = {
-            "elas": {
-                "description": "Γίνε μέλος της Ελληνικής Αστυνομίας. Προστάτεψε τους πολίτες & διατήρησε την τάξη.",
-                "emoji_key": "elas",
-            },
-            "ekab": {
-                "description": "Γίνε διασώστης του ΕΚΑΒ. Βοήθα τραυματίες & αντιμετώπισε έκτακτες καταστάσεις.",
-                "emoji_key": "ekab",
-            },
-            "staff": {
-                "description": "Γίνε μέλος της ομάδας staff. Διαχειρίσου reports & διατήρησε τους κανόνες.",
-                "emoji_key": "staff",
-            },
-            "manager": {
-                "description": "Θέση υψηλής ευθύνης. Διαχειρίσου το server & την ομάδα staff.",
-                "emoji_key": "manager",
-            },
+            "elas":    {"description": "Γίνε μέλος της ΕΛ.ΑΣ — προστάτεψε πολίτες & διατήρησε την τάξη.",       "emoji_key": "elas"},
+            "ekab":    {"description": "Γίνε διασώστης ΕΚΑΒ — βοήθα τραυματίες & χειρίσου έκτακτα περιστατικά.", "emoji_key": "ekab"},
+            "strato":  {"description": "Γίνε μέλος του Στρατού — υπεράσπισε την τάξη & την ασφάλεια.",           "emoji_key": "strato"},
+            "fbi":     {"description": "Γίνε πράκτορας FBI — διερεύνησε σοβαρά εγκλήματα & απειλές.",            "emoji_key": "fbi"},
+            "staff":   {"description": "Γίνε μέλος του staff team — διαχειρίσου reports & τήρησε τους κανόνες.", "emoji_key": "staff"},
+            "manager": {"description": "Θέση υψηλής ευθύνης — διαχειρίσου server & ομάδα staff.",               "emoji_key": "manager"},
         }
+
+        options = []
         for key, data in config.APPLICATION_TYPES.items():
             info = _app_info.get(key, {"description": "", "emoji_key": "apply"})
-            btn = ui.Button(
-                label="Apply",
-                style=discord.ButtonStyle.success,
-                emoji=emoji("applications", info["emoji_key"]),
-                custom_id=f"app_apply:{key}",
+            raw_emoji = emoji("applications", info["emoji_key"])
+            options.append(
+                discord.SelectOption(
+                    label=data["label"],
+                    value=key,
+                    description=info["description"][:100],
+                    emoji=raw_emoji if raw_emoji else None,
+                )
             )
-            section_text = f"**{data['label']}**\n{info['description']}"
-            add_section_with_button(container, text=section_text, button=btn)
+
+        select = ui.Select(
+            placeholder="Επίλεξε τύπο αίτησης...",
+            options=options,
+            custom_id="app_select",
+        )
+        add_action_row(container, select)
 
         view = ui.LayoutView(timeout=None)
         view.add_item(container)
@@ -152,7 +143,7 @@ class Applications(commands.Cog):
 
         container = build_base_container(
             title=f"{data['label']} Application",
-            description=f"{user.mention}\nΠάτησε **Start Your Application** όταν είσαι έτοιμος/η. Χρόνος ολοκλήρωσης:30 λεπτά",
+            description=f"{user.mention}\nΠάτησε **Start Your Application** όταν είσαι έτοιμος/η. Χρόνος ολοκλήρωσης: 30 λεπτά",
         )
         add_separator(container)
         start_btn = ui.Button(label="Start Your Application", style=discord.ButtonStyle.success, custom_id=f"app_start:{channel.id}")
@@ -181,7 +172,7 @@ class Applications(commands.Cog):
         store = storage.get_store(STORE_NAME)
         info = store.get(str(channel_id))
         if not info or interaction.user.id != info["user_id"]:
-            await interaction.response.send_message("Μόνο αυτός που έκανε την αίτηση μπορεί να την ξεκινήσει βλακάκο.", ephemeral=True)
+            await interaction.response.send_message("Μόνο αυτός που έκανε την αίτηση μπορεί να την ξεκινήσει.", ephemeral=True)
             return
         info["status"] = "answering"
         store[str(channel_id)] = info
@@ -213,7 +204,10 @@ class Applications(commands.Cog):
             store[str(message.channel.id)] = info
             storage.save(STORE_NAME, store)
 
-            container = build_base_container(title="✅ Ολοκλήρωσες τις ερωτήσεις!", description="Πάτησε **Send** για να στείλεις την αίτηση.")
+            container = build_base_container(
+                title="✅ Ολοκλήρωσες τις ερωτήσεις!",
+                description="Πάτησε **Send** για να στείλεις την αίτηση.",
+            )
             send_btn = ui.Button(label="Send", style=discord.ButtonStyle.success,
                                   emoji=emoji("applications", "send"), custom_id=f"app_send:{message.channel.id}")
             add_action_row(container, send_btn)
@@ -259,7 +253,9 @@ class Applications(commands.Cog):
         store[str(channel_id)] = info
         storage.save(STORE_NAME, store)
 
-        await interaction.response.send_message("✅ Η αίτηση στάλθηκε! Θα ενημερωθείς με DΜ, φρόντισε να μην τα έχεις κλειστά.", ephemeral=False)
+        await interaction.response.send_message(
+            "✅ Η αίτηση στάλθηκε! Θα ενημερωθείς με DΜ, φρόντισε να μην τα έχεις κλειστά.", ephemeral=False
+        )
 
     # ---------------- ACCEPT / DENY ----------------
     async def finalize_application(self, interaction: discord.Interaction, channel_id: int, *, accepted: bool, reason: str | None = None):
@@ -273,11 +269,19 @@ class Applications(commands.Cog):
         applicant = guild.get_member(info["user_id"])
 
         if accepted:
-            role = guild.get_role(config.WAITING_INTERVIEW_ROLE_ID)
-            if role and applicant:
-                await applicant.add_roles(role, reason="Application accepted")
+            role_id = config.APPLICATION_ACCEPTED_ROLES.get(info["type"])
+            if role_id:
+                role = guild.get_role(role_id)
+                if role and applicant:
+                    await applicant.add_roles(role, reason="Application accepted")
             info["status"] = "accepted"
-            dm_text = f"✅ Η αίτηση σου ({config.APPLICATION_TYPES[info['type']]['label']}) έγινε **δεκτή**! Θα πάρεις ρόλο 'Waiting for Interview'. Ενημέρωσε στο αντίστοιχο channel πότε μπορείς για το interview σου."
+            if info["type"] in ("staff", "manager"):
+                dm_text = (
+                    f"✅ Η αίτηση σου ({config.APPLICATION_TYPES[info['type']]['label']}) έγινε **δεκτή**! "
+                    f"Ενημέρωσε στο αντίστοιχο channel πότε μπορείς για το interview σου."
+                )
+            else:
+                dm_text = f"✅ Η αίτηση σου ({config.APPLICATION_TYPES[info['type']]['label']}) έγινε **δεκτή**!"
         else:
             info["status"] = "denied"
             dm_text = f"❌ Η αίτηση σου ({config.APPLICATION_TYPES[info['type']]['label']}) **απορρίφθηκε**.\nΛόγος: {reason}"
@@ -293,18 +297,16 @@ class Applications(commands.Cog):
             except discord.Forbidden:
                 pass
 
-        # Ξαναχτίζουμε το ΠΛΗΡΕΣ container με όλες τις ερωτήσεις/απαντήσεις +
-        # προσθέτουμε ποιος αποφάσισε - απλά ΧΩΡΙΣ τα κουμπιά Accept/Deny πια.
         type_label = config.APPLICATION_TYPES[info["type"]]["label"]
         questions = config.APPLICATION_TYPES[info["type"]]["questions"]
-
-        if accepted:
-            status_text = f"✅ **Accepted**\nUser: {interaction.user.mention}"
-        else:
-            status_text = f"❌ **Denied**\nUser: {interaction.user.mention}\nΛόγος: {reason}"
+        status_text = (
+            f"✅ **Accepted**\nΑπό: {interaction.user.mention}"
+            if accepted
+            else f"❌ **Denied**\nΑπό: {interaction.user.mention}\nΛόγος: {reason}"
+        )
 
         container = build_base_container(
-            title=f" Αίτηση — {type_label}",
+            title=f"Αίτηση — {type_label}",
             description=f"User: {applicant.mention if applicant else info['user_id']}",
         )
         add_separator(container)
@@ -396,8 +398,9 @@ class Applications(commands.Cog):
             return
         custom_id = interaction.data.get("custom_id", "")
 
-        if custom_id.startswith("app_apply:"):
-            await self.start_apply(interaction, custom_id.split(":")[1])
+        if custom_id == "app_select":
+            value = interaction.data["values"][0]
+            await self.start_apply(interaction, value)
         elif custom_id.startswith("app_start:"):
             await self.handle_start(interaction, int(custom_id.split(":")[1]))
         elif custom_id.startswith("app_send:"):
