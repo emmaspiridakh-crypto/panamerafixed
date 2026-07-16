@@ -200,7 +200,6 @@ APPLICATION_TYPES = {
             "Πόσες ώρες θα μπορείς να είσαι on;"
         ],
     },
-}
     "strato": {
         "label": "Στρατός",
         "questions": [
