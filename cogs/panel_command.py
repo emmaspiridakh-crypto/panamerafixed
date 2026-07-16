@@ -36,7 +36,7 @@ class PanelCommand(commands.Cog):
             value="`!say <text>`\n`!say2 <text>`",
             inline=False,
         )
-        embed.add_field(name="DM All (Management only)", value="`!dmall <text>`", inline=False)
+        embed.add_field(name="DM All (Founder only)", value="`!dmall <text>`", inline=False)
         embed.add_field(
             name="Slash Panels (Staff/Manager/Ownership)",
             value=(
