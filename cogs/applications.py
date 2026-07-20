@@ -66,6 +66,7 @@ class Applications(commands.Cog):
             "ekab":    {"description": "Γίνε διασώστης ΕΚΑΒ — βοήθα τραυματίες & χειρίσου έκτακτα περιστατικά.", "emoji_key": "ekab"},
             "strato":  {"description": "Γίνε μέλος του Στρατού — υπεράσπισε την τάξη & την ασφάλεια.",           "emoji_key": "strato"},
             "fbi":     {"description": "Γίνε πράκτορας FBI — διερεύνησε σοβαρά εγκλήματα & απειλές.",            "emoji_key": "fbi"},
+            "limeniko": {"description": "Γίνε μέλος του λιμενικού — προστάτεψε την πόλη",                        "emoji_key": "limeniko"},
             "staff":   {"description": "Γίνε μέλος του staff team — διαχειρίσου reports & τήρησε τους κανόνες.", "emoji_key": "staff"},
             "manager": {"description": "Θέση υψηλής ευθύνης — διαχειρίσου server & ομάδα staff.",               "emoji_key": "manager"},
         }
