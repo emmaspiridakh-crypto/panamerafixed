@@ -17,31 +17,31 @@ load_dotenv()
 # =========================================================
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-GUILD_ID = 1510300348341031113   # PLACEHOLDER: το ID του server σου
+GUILD_ID = 1519656885534457960   # PLACEHOLDER: το ID του server σου
 PREFIX = "!"
 
 # =========================================================
 # ROLES
 # =========================================================
-OWNERSHIP_ROLE_ID        = 1523088527691354253 # PLACEHOLDER
-MANAGER_ROLE_ID          = 1510300348374323210 # PLACEHOLDER
-STAFF_ROLE_ID            = 1510300348353478812 # PLACEHOLDER
-DEVELOPER_ROLE_ID        = 1510300348374323214 # PLACEHOLDER
-CIVILIAN_MANAGER_ROLE_ID = 1523067480816488620  # PLACEHOLDER
-CRIMINAL_MANAGER_ROLE_ID = 1510300348353478815  # PLACEHOLDER
-DONATE_MANAGER_ROLE_ID   = 1510300348374323215  # PLACEHOLDER
-FOUNDER_ROLE_ID          = 1510300348374323218  # PLACEHOLDER
-ON_DUTY_ROLE_ID          = 1523067577352323102 
-ANTICHEAT_MANAGER_ID = 1510300348341031117# PLACEHOLDER
+OWNERSHIP_ROLE_ID        = 1528884902211096707 # PLACEHOLDER
+MANAGER_ROLE_ID          = 1528885515317678130 # PLACEHOLDER
+STAFF_ROLE_ID            = 1519675512484659210# PLACEHOLDER
+DEVELOPER_ROLE_ID        = 1519675067280265218 # PLACEHOLDER
+CIVILIAN_MANAGER_ROLE_ID = 1528885954184478981  # PLACEHOLDER
+CRIMINAL_MANAGER_ROLE_ID = 1519676071333855252  # PLACEHOLDER
+DONATE_MANAGER_ROLE_ID   = 1519675834426724383  # PLACEHOLDER
+FOUNDER_ROLE_ID          = 1519674927454621706  # PLACEHOLDER
+ON_DUTY_ROLE_ID          = 1528886510902837328 
+ANTICHEAT_MANAGER_ID = 1528886718277615707# PLACEHOLDER
 APPLICATION_ACCEPTED_ROLES = {
-    "elas":   1527256651118153778 ,  # PLACEHOLDER
-    "ekab":   1527256723042074675,  # PLACEHOLDER
-    "strato": 1527256930488287302 ,  # PLACEHOLDER
-    "fbi":    1527256806517375036 ,  # PLACEHOLDER
-    "staff":  1510300348341031121 ,  # PLACEHOLDER - Waiting for Interview Staff
-    "manager":1527257268729679902,  # PLACEHOLDER - Waiting for Interview Manager
+    "elas": 1519827823920025660   ,  # PLACEHOLDER
+    "ekab": 1519679319545479400  ,  # PLACEHOLDER  # PLACEHOLDER
+    "fbi": 1528887030988280029, 
+    "limeniko": 1521149080854593669 ,  # PLACEHOLDER
+    "staff": 1528887734092038245  ,  # PLACEHOLDER - Waiting for Interview Staff
+    "manager":1528887734092038245 ,  # PLACEHOLDER - Waiting for Interview Manager
 }
-AUTOROLE_ID = 1510300348341031114# PLACEHOLDER (μπαίνει σε accepted applicants)
+AUTOROLE_ID = 1519675204702568448 # PLACEHOLDER (μπαίνει σε accepted applicants)
 
 # Ρόλοι που θεωρούνται "staff team" γενικά (χρησιμοποιείται σε αρκετά permission checks)
 STAFF_TEAM_ROLE_IDS = [STAFF_ROLE_ID, MANAGER_ROLE_ID, OWNERSHIP_ROLE_ID]
@@ -49,20 +49,20 @@ STAFF_TEAM_ROLE_IDS = [STAFF_ROLE_ID, MANAGER_ROLE_ID, OWNERSHIP_ROLE_ID]
 # =========================================================
 # TICKET SYSTEM #1 - SUPPORT (dropdown, 4 κατηγορίες, ξεχωριστό category η κάθε μία)
 # =========================================================
-TICKET_SUPPORT_CHANNEL_ID = 1510300349582413858  # PLACEHOLDER: πού θα σταλεί το panel (slash command target)
+TICKET_SUPPORT_CHANNEL_ID = 1519698625222017225  # PLACEHOLDER: πού θα σταλεί το panel (slash command target)
 TICKET_SUPPORT_BANNER_URL = "https://i.imgur.com/0xmFvSH.jpeg"
 TICKET_SUPPORT_THUMBNAIL_URL = "https://i.imgur.com/Ntirila.gif"
 
-CAT_TICKET_OWNERSHIP_ID =  1523076534607544400 # PLACEHOLDER category
-CAT_TICKET_REPORT_ID    =  1523076682704093214 # PLACEHOLDER category
-CAT_TICKET_SUPPORT_ID   =  1523076363517427843 # PLACEHOLDER category
-CAT_TICKET_BUG_ID        = 1523076572100296714
-CAT_TICKET_ANTICHEAT_ID = 1523076429745750141 # PLACEHOLDER category
+CAT_TICKET_OWNERSHIP_ID = 1528889138302947488  # PLACEHOLDER category
+CAT_TICKET_REPORT_ID    = 1528889946423689429  # PLACEHOLDER category
+CAT_TICKET_SUPPORT_ID   = 1528889800130691092  # PLACEHOLDER category
+CAT_TICKET_BUG_ID        = 1528890051042214050
+CAT_TICKET_ANTICHEAT_ID = 1528889454570242240 # PLACEHOLDER category
 
 # =========================================================
 # TICKET SYSTEM #2 - JOBS (button, civilian + criminal, ΙΔΙΟ category και τα δύο)
 # =========================================================
-CAT_JOBS_ID = 1523076883930026024 # PLACEHOLDER (ΚΟΙΝΟ category civilian + criminal)
+CAT_JOBS_ID = 1528890330345242654 # PLACEHOLDER (ΚΟΙΝΟ category civilian + criminal)
 
 TICKET_JOBS_BANNER_URL = "https://i.imgur.com/0xmFvSH.jpeg"
 TICKET_JOBS_THUMBNAIL_URL = "https://i.imgur.com/Ntirila.gif"
@@ -70,63 +70,63 @@ TICKET_JOBS_THUMBNAIL_URL = "https://i.imgur.com/Ntirila.gif"
 # =========================================================
 # TICKET SYSTEM #3 - DONATE (button, δικό του category)
 # =========================================================
-CAT_DONATE_ID = 1523077060506157126 # PLACEHOLDER category
+CAT_DONATE_ID = 1528890179459354736 # PLACEHOLDER category
 
 TICKET_DONATE_BANNER_URL = "https://i.imgur.com/0xmFvSH.jpeg"
 TICKET_DONATE_THUMBNAIL_URL = "https://i.imgur.com/Ntirila.gif"
 
 # Channel όπου γίνεται ping το staff team όταν ανοίγει ΟΠΟΙΟΔΗΠΟΤΕ ticket (support/jobs/donate) ή temp voice
-STAFF_PING_CHANNEL_ID = 1523073829122084885  # PLACEHOLDER
+STAFF_PING_CHANNEL_ID = 1528890923575152743  # PLACEHOLDER
 
 # Ticket logs (open + close) - ΞΕΧΩΡΙΣΤΟ από το STAFF_PING_CHANNEL_ID
-LOG_TICKETS_CHANNEL_ID = 1523089687743299726    # PLACEHOLDER
+LOG_TICKETS_CHANNEL_ID = 1528882078249386205    # PLACEHOLDER
 
 # =========================================================
 # SUGGESTIONS
 # =========================================================
-SUGGESTIONS_CHANNEL_ID = 1510300350022815957   # PLACEHOLDER (εδώ ο χρήστης γράφει -> γίνεται auto suggestion)
+SUGGESTIONS_CHANNEL_ID = 1519668182237974629   # PLACEHOLDER (εδώ ο χρήστης γράφει -> γίνεται auto suggestion)
 
 # =========================================================
 # TEMP VOICE
 # =========================================================
-TEMP_VOICE_JOIN_CHANNEL_ID = 1510300349582413859    # PLACEHOLDER ("Join to Create" channel)
-TEMP_VOICE_CATEGORY_ID     = 1510300349582413856   # PLACEHOLDER (εκεί δημιουργούνται τα temp channels)
+TEMP_VOICE_JOIN_CHANNEL_ID =  1519692924474884178   # PLACEHOLDER ("Join to Create" channel)
+TEMP_VOICE_CATEGORY_ID     =  1519692672019988641  # PLACEHOLDER (εκεί δημιουργούνται τα temp channels)
 
 # =========================================================
 # STAFF ACTIVITY
 # =========================================================
-STAFF_ACTIVITY_VOICE_CHANNEL_ID = 1510300349213184175 # PLACEHOLDER (το channel που μετράμε χρόνο)
-STAFF_ACTIVITY_PANEL_CHANNEL_ID = 1510300349003600090 # PLACEHOLDER (πού στέλνεται/μένει το leaderboard panel)
-STAFF_ACTIVITY_LOG_CHANNEL_ID   = 1523073238098514132 # PLACEHOLDER
+STAFF_ACTIVITY_VOICE_CHANNEL_ID = 1519662330504413225 # PLACEHOLDER (το channel που μετράμε χρόνο)
+STAFF_ACTIVITY_PANEL_CHANNEL_ID = 1528891407543177367 # PLACEHOLDER (πού στέλνεται/μένει το leaderboard panel)
+STAFF_ACTIVITY_LOG_CHANNEL_ID   = 1528882023886880889 # PLACEHOLDER
 STAFF_ACTIVITY_BANNER_URL = "https://i.imgur.com/0xmFvSH.jpeg"
 
 # =========================================================
 # LOGS (Requirement 8)
 # =========================================================
-LOG_JOIN_LEAVE_CHANNEL_ID = 1523072794705789128 # PLACEHOLDER (join + leave μαζί)
-LOG_ROLES_CHANNEL_ID      = 1523072951455580353  # PLACEHOLDER
-LOG_CHANNELS_CHANNEL_ID   = 1523073336291233792# PLACEHOLDER (create/delete/edit channels)
-LOG_MESSAGES_CHANNEL_ID   = 1523072933235261520  # PLACEHOLDER (edit/delete messages)
-LOG_VOICE_CHANNEL_ID      = 1523072879221276873 # PLACEHOLDER
-LOG_APPLICATIONS_CHANNEL_ID = 1523073005193007155    # PLACEHOLDER
+LOG_JOIN_LEAVE_CHANNEL_ID = 1528881175454548151 # PLACEHOLDER (join + leave μαζί)
+LOG_ROLES_CHANNEL_ID      = 1528881626203820194  # PLACEHOLDER
+LOG_CHANNELS_CHANNEL_ID   = 1528881391675244735 # PLACEHOLDER (create/delete/edit channels)
+LOG_MESSAGES_CHANNEL_ID   = 1528881469869522974 # PLACEHOLDER (edit/delete messages)
+LOG_VOICE_CHANNEL_ID      = 1528881261966528722  # PLACEHOLDER
+LOG_APPLICATIONS_CHANNEL_ID = 1528881706860282057     # PLACEHOLDER
 
 # Invite logs: ποιος προσκάλεσε ποιον, πόσα invites/μέλη μέσα/έχουν φύγει ανά inviter
-INVITE_LOG_CHANNEL_ID = 1523072907310268416   # PLACEHOLDER
+INVITE_LOG_CHANNEL_ID = 1528881334708342824   # PLACEHOLDER
 
 # Command logs (Requirement 5) - ξεχωριστό log ανά εντολή, εκτός say/say2/dmall (κοινό)
-LOG_BAN_CHANNEL_ID          = 1523073122323005510 # PLACEHOLDER
-LOG_UNBAN_CHANNEL_ID        = 1523073122323005510# PLACEHOLDER
-LOG_KICK_CHANNEL_ID         = 1523073200802758727 # PLACEHOLDER
-LOG_TIMEOUT_CHANNEL_ID      = 1523073158402408542  # PLACEHOLDER
-LOG_UNTIMEOUT_CHANNEL_ID    = 1523073158402408542# PLACEHOLDER
-LOG_CLEARMESSAGES_CHANNEL_ID = 1523073089267695746 # PLACEHOLDER
-LOG_SAY_DMALL_CHANNEL_ID    = 1523073089267695746 # PLACEHOLDER (say, say2, dmall μαζί)
+LOG_BAN_CHANNEL_ID          = 1528881816994578502 # PLACEHOLDER
+LOG_UNBAN_CHANNEL_ID        = 1528881816994578502# PLACEHOLDER
+LOG_KICK_CHANNEL_ID         = 1528881975060992030  # PLACEHOLDER
+LOG_TIMEOUT_CHANNEL_ID      = 1528881334708342824  # PLACEHOLDER
+LOG_UNTIMEOUT_CHANNEL_ID    = 1528881334708342824# PLACEHOLDER
+LOG_CLEARMESSAGES_CHANNEL_ID = 1528881763785637898 # PLACEHOLDER
+LOG_SAY_DMALL_CHANNEL_ID    = 1528881763785637898 # PLACEHOLDER (say, say2, dmall μαζί)
 
 # =========================================================
 # APPLICATIONS (Requirement 9)
 # =========================================================
-APPLICATIONS_PANEL_CHANNEL_ID = 1518980714060578907   # PLACEHOLDER (πού στέλνεται το panel)
-APPLICATIONS_CATEGORY_ID      = 1523076951072575528 # PLACEHOLDER (εκεί ανοίγουν τα application channels)
+APPLICATIONS_PANEL_CHANNEL_ID = 1528892710742790174   # PLACEHOLDER (πού στέλνεται το panel)
+APPLICATIONS_CATEGORY_ID      = 1528890443243458571 # PLACEHOLDER (εκεί ανοίγουν τα application channels)
 APPLICATIONS_BANNER_URL = "https://i.imgur.com/0xmFvSH.jpeg"
 
 # Τύποι αιτήσεων -> ερωτήσεις. Βάλε τις ερωτήσεις σου εδώ (μία λίστα string ανά τύπο).
@@ -200,20 +200,20 @@ APPLICATION_TYPES = {
             "Πόσες ώρες θα μπορείς να είσαι on;"
         ],
     },
-    "strato": {
-        "label": "Στρατός",
+    "limeniko": {
+        "label": "Λιμενικό",
         "questions": [
             "Πόσο χρονών είσαι;",
             "Πως σε λένε στο roblox;",
-            "Γιατί θέλεις να υπηρετήσεις στον στρατό;",
-            "Ποια θεωρείς ότι είναι τα σημαντικότερα χαρακτηριστικά ενός καλού στρατιώτη;",
+            "Γιατί θέλεις να υπηρετήσεις στο λιμενικό;",
+            "Ποια θεωρείς ότι είναι τα σημαντικότερα χαρακτηριστικά ενός καλού άτομου στο λιμενικό;",
             "Πώς αντιμετωπίζεις καταστάσεις πίεσης ή άγχους;",
             "Έχεις συμμετάσχει ποτέ σε δραστηριότητες που απαιτούσαν ομαδική συνεργασία; Δώσε ένα παράδειγμα.",
             "Πώς θα αντιδρούσες αν λάμβανες μια δύσκολη διαταγή με την οποία δεν συμφωνούσες προσωπικά;",
             "Ποια είναι τα δυνατά σου σημεία και ποια θεωρείς ότι χρειάζονται βελτίωση;",
-            "Πώς διατηρείς τη φυσική σου κατάσταση και πόσο σημαντική πιστεύεις ότι είναι η σωματική άσκηση για έναν στρατιωτικό;",
+            "Πώς διατηρείς τη φυσική σου κατάσταση και πόσο σημαντική πιστεύεις ότι είναι η σωματική άσκηση για ένα άτομο στο λιμενικό;",
             "Πώς θα διαχειριζόσουν μια κατάσταση όπου θα έπρεπε να πάρεις γρήγορα μια κρίσιμη απόφαση;",
-            "Τι γνωρίζεις για τις υποχρεώσεις και τις απαιτήσεις της στρατιωτικής ζωής;"
+            "Τι γνωρίζεις για τις υποχρεώσεις και τις απαιτήσεις της λιμενικής ζωής;"
         ],
     },
     "fbi": {
@@ -236,10 +236,10 @@ APPLICATION_TYPES = {
 # =========================================================
 # SERVER STATUS (Requirement 10) - voice channels που λειτουργούν ως "οθόνες"
 # =========================================================
-STATUS_MEMBERS_CHANNEL_ID = 1523085502536880188  # PLACEHOLDER (π.χ. "👥 Members: 120")
-STATUS_ONLINE_CHANNEL_ID  = 1523085406331994183  # PLACEHOLDER
-STATUS_BOOSTS_CHANNEL_ID  = 1523085582698414100  # PLACEHOLDER
-STATUS_BOTS_CHANNEL_ID    = 1523085536187650098  # PLACEHOLDER
+STATUS_MEMBERS_CHANNEL_ID = 1525307046784667799  # PLACEHOLDER (π.χ. "👥 Members: 120")
+STATUS_ONLINE_CHANNEL_ID  = 1525307050543022130  # PLACEHOLDER
+STATUS_BOOSTS_CHANNEL_ID  = 1525307057773744258  # PLACEHOLDER
+STATUS_BOTS_CHANNEL_ID    = 1525307053722304544  # PLACEHOLDER
 
 # =========================================================
 # ΓΕΝΙΚΑ
