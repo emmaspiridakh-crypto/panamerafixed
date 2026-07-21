@@ -90,7 +90,7 @@ SUGGESTIONS_CHANNEL_ID = 1519668182237974629   # PLACEHOLDER (εδώ ο χρήσ
 # TEMP VOICE
 # =========================================================
 TEMP_VOICE_JOIN_CHANNEL_ID =  1519692924474884178   # PLACEHOLDER ("Join to Create" channel)
-TEMP_VOICE_CATEGORY_ID     =  1519692672019988641  # PLACEHOLDER (εκεί δημιουργούνται τα temp channels)
+TEMP_VOICE_CATEGORY_ID     =  1529169124524036106  # PLACEHOLDER (εκεί δημιουργούνται τα temp channels)
 
 # =========================================================
 # STAFF ACTIVITY
