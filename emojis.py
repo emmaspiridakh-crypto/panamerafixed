@@ -26,6 +26,7 @@ EMOJIS = {
         "close": "<:close:1528886394288865421>",
         "ping": "<a:ping:1528886230190919800>",
         "ticket": "<:ticket:1528885002836644152>",
+        "reward": "<:reward:1529408322275512340>",  # PLACEHOLDER: βάλε custom emoji αν θες
     },
     "jobs": {
         "civilian": "<:civilian:1528885189017866300>",
