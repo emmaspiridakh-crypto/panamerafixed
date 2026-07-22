@@ -23,6 +23,7 @@ EMOJIS = {
         "support": "<a:support:1528885660340195470>",
         "bug": "<:bug:1528885729730498761>",
         "anticheat": "<:anticheat:1528886656982323301>",
+        "clprize": "<:clprize:1529408322275512340>",
         "close": "<:close:1528886394288865421>",
         "ping": "<a:ping:1528886230190919800>",
         "ticket": "<:ticket:1528885002836644152>",
@@ -54,7 +55,7 @@ EMOJIS = {
     "staff_activity": {
         "on_duty": "<a:on_duty:1528887355698581697>",
         "off_duty": "<a:off_duty:1528887254981017705>",
-        "leaderboard": "<a:leaderboard:1528824025600622632>",
+        "leaderboard": "<:leaderboard:1528824025600622632>",
     },
     "applications": {
         "elas": "<:elas:1520566656370217010>",
@@ -71,6 +72,24 @@ EMOJIS = {
     },
     "panel": {
         "list": "<:list:1528886566389289131>",
+    },
+"giveaway": {
+    "giveaway":      "<a:giveaway:1529407370416099398>",
+    "join":          "<:gw_join:1529410479233962026>",
+    "leave":         "<:gw_leave:1529410448649355366>",
+    "info":          "<:gw_info:1529410422841675867>",
+    "edit":          "<:gw_edit:1528887760977662012>",
+    "reroll":        "<:gw_reroll:1529409770279145493>",
+    "end":           "<a:gw_end:1528887254981017705>",
+    "participants":  "<:gw_participants:1529409844514258994>",
+    "winner":        "<:gw_winner:1529407419778596874>",
+    "prize":         "<a:gw_prize:1529407370416099398>",
+    "host":          "<:gw_host:1529409206699167905>",
+    "winners_count": "<a:gw_winners:1529410389283045376>",
+    "entries":       "<:gw_entries:1529409844514258994>",
+    "time":          "<a:gw_time:1529409247530582016>",
+    "id":            "<:gw_id:1529408099394257026>",
+    "role":          "<:gw_role:1528824025600622632>",
     },
 }
 
