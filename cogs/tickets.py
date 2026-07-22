@@ -148,7 +148,7 @@ class Tickets(commands.Cog):
 
         container = build_base_container(
             title=f"{data['emoji']} {data['label']} Ticket",
-            description=f"Άνοιξε από: {opener.mention}\nΠερίμενε λιγο και η ομάδα μας θα απαντήσει σύντομα.",
+            description=f"Άνοιξε από: {opener.mention}\n Παρακαλόυμε περιμένετε λίγο και η ομάδα μας θα σας απαντήσει σύντομα.",
             color=discord.Colour.yellow(),
         )
         add_separator(container)
@@ -187,7 +187,7 @@ class Tickets(commands.Cog):
         store = storage.get_store(STORE_NAME)
         info = store.get(str(channel_id))
         if not info:
-            await interaction.response.send_message("Αυτό το ticket δεν υπάρχει πια στο σύστημα.", ephemeral=True)
+            await interaction.response.send_message("Αυτό το ticket δεν υπάρχει πια.", ephemeral=True)
             return
 
         if interaction.user.id == info["opener_id"]:
