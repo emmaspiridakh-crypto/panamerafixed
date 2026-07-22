@@ -39,6 +39,7 @@ COGS = [
     "cogs.autorole",
     "cogs.invite_tracking",
     "cogs.giveaways",
+    "cogs.warnings",
 ]
 
 
