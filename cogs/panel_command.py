@@ -53,6 +53,11 @@ class PanelCommand(commands.Cog):
             ),
             inline=False,
         )
+        embed.add_field(
+            name="Warnings (Ownership only)",
+            value="`/warn`\n`/remove-warning <user>`",
+            inline=False,
+        )
         await ctx.send(embed=embed)
 
 
