@@ -64,6 +64,12 @@ def _ticket_types() -> dict:
             "category_id": config.CAT_TICKET_ANTICHEAT_ID,
             "view_roles": [config.ANTICHEAT_MANAGER_ID, config.OWNERSHIP_ROLE_ID],
         },
+        "reward": {
+            "label": "Claim Your Reward",
+            "emoji": emoji("tickets", "reward"),
+            "category_id": config.CAT_TICKET_REWARD_ID,
+            "view_roles": config.STAFF_TEAM_ROLE_IDS,  # περιλαμβάνει και το Ownership
+        },
         "civilian_job": {
             "label": "Civilian Job",
             "emoji": emoji("jobs", "civilian"),
@@ -291,6 +297,7 @@ class Tickets(commands.Cog):
             "support": "Γενική υποστήριξη & ερωτήσεις",
             "bug": "Αναφορά σφάλματος στο server ή bot",
             "anticheat": "Αναφορά περιστατικού cheat/exploit",
+            "reward": "Διεκδίκησε το reward σου",
         }
         options = [
             discord.SelectOption(
@@ -299,7 +306,7 @@ class Tickets(commands.Cog):
                 emoji=ttypes[k]["emoji"] or None,
                 description=_descriptions.get(k, ""),
             )
-            for k in ("ownership", "report", "support", "bug", "anticheat")
+            for k in ("ownership", "report", "support", "bug", "anticheat", "reward")
         ]
         select = ui.Select(placeholder="Επίλεξε κατηγορία...", options=options, custom_id="support_ticket_select")
         add_action_row(container, select)
