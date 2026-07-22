@@ -319,12 +319,10 @@ class Giveaways(commands.Cog):
 
         container = ui.Container(accent_colour=discord.Colour.gold() if not is_ended else discord.Colour.greyple())
 
-        if guild.icon:
-            section = ui.Section(accessory=ui.Thumbnail(media=guild.icon.url))
-            section.add_item(ui.TextDisplay(panel_text))
-            container.add_item(section)
-        else:
-            container.add_item(ui.TextDisplay(panel_text))
+        if config.GIVEAWAY_BANNER_URL:
+            container.add_item(ui.MediaGallery(discord.MediaGalleryItem(media=config.GIVEAWAY_BANNER_URL)))
+
+        container.add_item(ui.TextDisplay(panel_text))
 
         container.add_item(ui.Separator(spacing=discord.SeparatorSpacing.small))
 
