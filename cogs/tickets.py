@@ -64,6 +64,12 @@ def _ticket_types() -> dict:
             "category_id": config.CAT_TICKET_ANTICHEAT_ID,
             "view_roles": [config.ANTICHEAT_MANAGER_ID, config.OWNERSHIP_ROLE_ID],
         },
+        "claim_reward": {
+            "lable": "Claim your Reward"
+            "emoji": emoji("tickets", "clreward"),
+            "category_id": config.CAT_TICKET_REWARD_ID,
+            "view_roles": [config.OWNERSHIP_ROLE_ID],
+        },   
         "civilian_job": {
             "label": "Civilian Job",
             "emoji": emoji("jobs", "civilian"),
@@ -279,8 +285,8 @@ class Tickets(commands.Cog):
     async def panel_support(self, interaction: discord.Interaction):
         ttypes = _ticket_types()
         container = build_base_container(
-            title="Warzone Reborn Roleplay - Support Tickets",
-            description="Επίλεξε κατηγορία από το μενού παρακάτω για να ανοίξεις ticket. Περιέγραψε το θέμα που σε απασχολεί και θα σε βοηθήσουμε σύντομα.",
+            title="Warzone Reborn Roleplay - Tickets",
+            description="Επίλεξε κατηγορία από το μενού παρακάτω για να ανοίξεις το ticket που θές. Πές μας τι χρειάζεσαι και θα σε εξυπηρετίσουμε πολύ σύντομα.",
             banner_url=config.TICKET_SUPPORT_BANNER_URL,
             thumbnail_url=config.TICKET_SUPPORT_THUMBNAIL_URL,
         )
@@ -291,6 +297,7 @@ class Tickets(commands.Cog):
             "support": "Γενική υποστήριξη & ερωτήσεις",
             "bug": "Αναφορά σφάλματος στο server ή bot",
             "anticheat": "Αναφορά περιστατικού cheat/exploit",
+            "claim_reward": "Διεκδίκησε το έπαθλο σου",
         }
         options = [
             discord.SelectOption(
@@ -299,7 +306,7 @@ class Tickets(commands.Cog):
                 emoji=ttypes[k]["emoji"] or None,
                 description=_descriptions.get(k, ""),
             )
-            for k in ("ownership", "report", "support", "bug", "anticheat")
+            for k in ("ownership", "report", "support", "bug", "anticheat", "claim_reward")
         ]
         select = ui.Select(placeholder="Επίλεξε κατηγορία...", options=options, custom_id="support_ticket_select")
         add_action_row(container, select)
