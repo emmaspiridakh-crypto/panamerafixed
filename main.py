@@ -38,6 +38,7 @@ COGS = [
     "cogs.panel_command",
     "cogs.autorole",
     "cogs.invite_tracking",
+    "cogs.giveaways",
 ]
 
 
