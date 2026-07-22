@@ -64,7 +64,6 @@ class Applications(commands.Cog):
         _app_info = {
             "elas":    {"description": "Γίνε μέλος της ΕΛ.ΑΣ — προστάτεψε πολίτες & διατήρησε την τάξη.",       "emoji_key": "elas"},
             "ekab":    {"description": "Γίνε διασώστης ΕΚΑΒ — βοήθα τραυματίες & χειρίσου έκτακτα περιστατικά.", "emoji_key": "ekab"},
-            "strato":  {"description": "Γίνε μέλος του Στρατού — υπεράσπισε την τάξη & την ασφάλεια.",           "emoji_key": "strato"},
             "fbi":     {"description": "Γίνε πράκτορας FBI — διερεύνησε σοβαρά εγκλήματα & απειλές.",            "emoji_key": "fbi"},
             "limeniko": {"description": "Γίνε μέλος του λιμενικού — προστάτεψε την πόλη",                        "emoji_key": "limeniko"},
             "staff":   {"description": "Γίνε μέλος του staff team — διαχειρίσου reports & τήρησε τους κανόνες.", "emoji_key": "staff"},
