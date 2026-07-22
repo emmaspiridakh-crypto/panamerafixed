@@ -58,6 +58,7 @@ CAT_TICKET_REPORT_ID    = 1528889946423689429  # PLACEHOLDER category
 CAT_TICKET_SUPPORT_ID   = 1528889800130691092  # PLACEHOLDER category
 CAT_TICKET_BUG_ID        = 1528890051042214050
 CAT_TICKET_ANTICHEAT_ID = 1528889454570242240
+CAT_TICKET_REWARD_ID    = 1528889800130691092  # PLACEHOLDER category (Claim Your Reward ticket)
 
 # =========================================================
 # TICKET SYSTEM #2 - JOBS (button, civilian + criminal, ΙΔΙΟ category και τα δύο)
@@ -130,6 +131,17 @@ APPLICATIONS_CATEGORY_ID      = 1528890443243458571 # PLACEHOLDER (εκεί αν
 APPLICATIONS_BANNER_URL = "https://i.imgur.com/0xmFvSH.jpeg"
 
 LOG_GIVEAWAY_CHANNEL_ID = 1529399403746689074  # PLACEHOLDER
+GIVEAWAY_BANNER_URL = "https://i.imgur.com/0xmFvSH.jpeg"  # PLACEHOLDER (banner στο giveaway panel)
+
+# =========================================================
+# WARNING SYSTEM
+# =========================================================
+LOG_WARN_CHANNEL_ID = 1529630197530366062  # PLACEHOLDER (logs για /warn και /remove-warning)
+
+# Ρόλος που παίρνει ο χρήστης ανάλογα με το επίπεδο του warning
+WARN_ROLE_1_ID = 1529630282804629594  # PLACEHOLDER
+WARN_ROLE_2_ID = 1529630472005619722  # PLACEHOLDER
+WARN_ROLE_3_ID = 1529630570542268436  # PLACEHOLDER
 
 # Τύποι αιτήσεων -> ερωτήσεις. Βάλε τις ερωτήσεις σου εδώ (μία λίστα string ανά τύπο).
 APPLICATION_TYPES = {
