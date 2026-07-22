@@ -129,6 +129,8 @@ APPLICATIONS_PANEL_CHANNEL_ID = 1528892710742790174   # PLACEHOLDER (πού στ
 APPLICATIONS_CATEGORY_ID      = 1528890443243458571 # PLACEHOLDER (εκεί ανοίγουν τα application channels)
 APPLICATIONS_BANNER_URL = "https://i.imgur.com/0xmFvSH.jpeg"
 
+LOG_GIVEAWAY_CHANNEL_ID = 1529399403746689074  # PLACEHOLDER
+
 # Τύποι αιτήσεων -> ερωτήσεις. Βάλε τις ερωτήσεις σου εδώ (μία λίστα string ανά τύπο).
 APPLICATION_TYPES = {
     "elas": {
