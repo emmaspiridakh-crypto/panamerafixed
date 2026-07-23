@@ -96,6 +96,42 @@ async def _send_log(guild: discord.Guild, embed: discord.Embed):
             pass
 
 
+def _announce_warn_embed(guild: discord.Guild, *, target: discord.Member, moderator: discord.Member,
+                          level: int, reason: str) -> discord.Embed:
+    embed = discord.Embed(
+        title="⚠️ Νέο Warning",
+        description=f"Ο {target.mention} πήρε warning από τον {moderator.mention}",
+        color=0xFEE75C,
+        timestamp=datetime.datetime.now(datetime.timezone.utc),
+    )
+    embed.add_field(name="Level", value=f"Warning {level}", inline=True)
+    embed.add_field(name="Reason", value=reason, inline=False)
+    embed.set_thumbnail(url=target.display_avatar.url)
+    return embed
+
+
+def _announce_remove_embed(guild: discord.Guild, *, target: discord.Member, moderator: discord.Member,
+                            level: int) -> discord.Embed:
+    embed = discord.Embed(
+        title="✅ Αφαίρεση Warning",
+        description=f"Αφαιρέθηκε warning από τον {target.mention} από τον {moderator.mention}",
+        color=0x57F287,
+        timestamp=datetime.datetime.now(datetime.timezone.utc),
+    )
+    embed.add_field(name="Level", value=f"Warning {level}", inline=True)
+    embed.set_thumbnail(url=target.display_avatar.url)
+    return embed
+
+
+async def _send_announce(guild: discord.Guild, embed: discord.Embed):
+    channel = guild.get_channel(config.WARN_ANNOUNCE_CHANNEL_ID)
+    if channel:
+        try:
+            await channel.send(embed=embed)
+        except discord.HTTPException:
+            pass
+
+
 def _simple_view(text: str, color: discord.Colour) -> ui.LayoutView:
     container = ui.Container(accent_colour=color)
     container.add_item(ui.TextDisplay(text))
@@ -290,6 +326,10 @@ class Warnings(commands.Cog):
             ],
         ))
 
+        await _send_announce(guild, _announce_warn_embed(
+            guild, target=target, moderator=moderator, level=level, reason=reason,
+        ))
+
     # ---------------------------------------------------
     # /remove-warning ολοκλήρωση
     # ---------------------------------------------------
@@ -330,6 +370,10 @@ class Warnings(commands.Cog):
                 ("Υπόλοιπα Warnings", str(len(remaining)), True),
                 ("Αφαιρέθηκε από", f"{interaction.user.mention} (`{interaction.user.id}`)", False),
             ],
+        ))
+
+        await _send_announce(guild, _announce_remove_embed(
+            guild, target=target, moderator=interaction.user, level=level,
         ))
 
     # ---------------------------------------------------
