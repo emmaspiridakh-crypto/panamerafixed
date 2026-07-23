@@ -136,7 +136,8 @@ GIVEAWAY_BANNER_URL = "https://i.imgur.com/0xmFvSH.jpeg"  # PLACEHOLDER (banner 
 # =========================================================
 # WARNING SYSTEM
 # =========================================================
-LOG_WARN_CHANNEL_ID = 1529630197530366062  # PLACEHOLDER (logs για /warn και /remove-warning)
+LOG_WARN_CHANNEL_ID = 1529630197530366062
+WARN_ANNOUNCE_CHANNEL_ID = 1529691268387442758 # PLACEHOLDER (logs για /warn και /remove-warning)
 
 # Ρόλος που παίρνει ο χρήστης ανάλογα με το επίπεδο του warning
 WARN_ROLE_1_ID = 1529630282804629594  # PLACEHOLDER
